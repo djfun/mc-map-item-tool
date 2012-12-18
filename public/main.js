@@ -71,7 +71,7 @@ function reducecolors(ev) {
     pixelData.data[index + 2] = minecraftcolors[closestColorIndex].values[2];
     pixelData.data[index + 3] = minecraftcolors[closestColorIndex].values[3];
 
-    map_item.push(closestColorIndex + 4);
+    map_item.push(closestColorIndex + 3);
     // console.log(c);
   }
   ctx.putImageData(pixelData, 0, 0);
@@ -92,6 +92,7 @@ function createfile(ev) {
 }
 
 var minecraftcolors = [
+  new Colour(Colour.RGBA, [0, 0, 0, 0]),
   new Colour(Colour.RGBA, [89, 125, 39, 255]),
   new Colour(Colour.RGBA, [109,153,48, 255]),
   new Colour(Colour.RGBA, [127,178,56, 255]),
