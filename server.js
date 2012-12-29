@@ -53,7 +53,7 @@ var tmp_files = {
   files: {}
 };
 
-app.listen(process.env.PORT || 8080);
+app.listen(process.env.PORT || 8080, process.env.HOST || 'localhost');
 
 function handler (req, res) {
   var referer = req.headers.referer;
