@@ -31,7 +31,7 @@ var delete_tmp_files = function (file) {
     if (err) {
       throw err;
     } else {
-      console.log('successfully deleted /tmp/' + file);
+      console.log(myDate.getCurrent() + ' Successfully deleted /tmp/' + file);
     }
   });
 };
@@ -45,6 +45,7 @@ var tmp_files = {
     var time = (new Date()).getTime();
     for (var hash in this.files) {
       if (this.files[hash] < time - 300000) {
+        delete_tmp_files(hash + '.dat');
         delete this.files[hash];
       }
     }
@@ -52,9 +53,16 @@ var tmp_files = {
   files: {}
 };
 
-app.listen(8080);
+app.listen(process.env.PORT || 8080);
 
 function handler (req, res) {
+  var referer = req.headers.referer;
+  if (referer) {
+    if (referer.indexOf(req.headers.host) !== 7) {
+      console.log(myDate.getCurrent() + ' Referer: ' + referer);
+    }
+  }
+
   var body='';
   req.on('data', function (data) {
     body +=data;
@@ -63,7 +71,7 @@ function handler (req, res) {
     var error, decodedBody, map_item_array;
     if (req.method == 'GET' && req.url.substr(0, 4) == '/tmp') {
       if (tmp_files.files[req.url.substr(5, 40)]) {
-        console.log('serve tmp file');
+        console.log(myDate.getCurrent() + ' Serve tmp file: ' + req.url);
         file.serveFile(req.url, 200,
           {'Content-Disposition': 'attachment; filename="map_0.dat"'}, req, res);
       } else {
@@ -88,6 +96,7 @@ function handler (req, res) {
         }
       } catch (e) {
         error = true;
+        console.log(myDate.getCurrent() + ' Error:');
         console.log(e);
         res.writeHead(500);
         res.end("Internal server error");
@@ -149,11 +158,12 @@ function handler (req, res) {
           if (err) {
             res.writeHead(500);
             res.end("Internal server error");
+            console.log(myDate.getCurrent() + ' Error:');
             console.log(err);
           } else {
             fs.writeFile('public/tmp/' + filename + '.dat', data, function(err) {
               if (!err) {
-                console.log('file should have been written');
+                console.log(myDate.getCurrent() + ' Map file written to disk: ' + filename + '.dat');
                 res.setHeader('Content-Type', 'text/html');
                 res.writeHead(200);
                 res.end('<a href="tmp/' + filename + '.dat">Download</a>');
@@ -166,6 +176,7 @@ function handler (req, res) {
           }
         });
       } else {
+        console.log(myDate.getCurrent() + ' 400 Bad request');
         res.writeHead(400);
         res.end("Bad request");
       }
@@ -174,3 +185,27 @@ function handler (req, res) {
     }
   });
 }
+
+var myDate = {};
+
+myDate.getCurrent = function(timestamp) {
+  var d = new Date();
+  if (timestamp) {
+    d.setTime(timestamp);
+  }
+  var hours = d.getHours();
+  hours = hours < 10 ? '0' + hours : hours;
+  var minutes = d.getMinutes();
+  minutes = minutes < 10 ? '0' + minutes : minutes;
+  var seconds = d.getSeconds();
+  seconds = seconds < 10 ? '0' + seconds : seconds;
+
+  var day = d.getDate();
+  day = day < 10 ? '0' + day : day;
+  var month = d.getMonth() + 1;
+  month = month < 10 ? '0' + month : month;
+  var year = d.getFullYear();
+
+
+  return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+};
