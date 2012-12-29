@@ -43,6 +43,7 @@ function draw(ev) {
     $('.step-1').addClass('hidden');
     $('.step-2').removeClass('hidden');
   };
+  colourSpace = Cookies.get('colourSpace') || 'laba';
 }
 
 function reducecolors(ev) {
@@ -51,16 +52,31 @@ function reducecolors(ev) {
   var c;
   var index;
   var closestDistance, closestColorIndex, distance;
+  var compareColors;
   map_item = [];
   for (var i = 0; i < pixelData.data.length / 4; i++) {
     index = i * 4;
     c = new Colour( Colour.RGBA, [pixelData.data[index],
      pixelData.data[index + 1],
      pixelData.data[index + 2],
-     pixelData.data[index + 3]] ).convertTo(Colour.LABA);
+     pixelData.data[index + 3]] );
+
+    if (colourSpace == 'laba') {
+      c = c.convertTo(Colour.LABA);
+      compareColors = minecraftcolors_laba;
+    } else if (colourSpace == 'rgba') {
+      compareColors = minecraftcolors;
+    } else if (colourSpace == 'xyza') {
+      c = c.convertTo(Colour.XYZA);
+      compareColors = minecraftcolors_xyza;
+    } else if (colourSpace == 'hsva') {
+      c = c.convertTo(Colour.HSVA);
+      compareColors = minecraftcolors_hsva;
+    }
+    
     closestDistance = Number.MAX_VALUE;
     for (var k = 0; k < minecraftcolors.length; k++) {
-      distance = c.distanceTo(minecraftcolors_laba[k]);
+      distance = c.distanceTo(compareColors[k]);
       if (distance < closestDistance) {
         closestDistance = distance;
         closestColorIndex = k;
@@ -155,6 +171,14 @@ var minecraftcolors = [
 var minecraftcolors_laba = [];
 for (var i = 0; i < minecraftcolors.length; i++) {
   minecraftcolors_laba.push(minecraftcolors[i].convertTo(Colour.LABA));
+}
+var minecraftcolors_hsva = [];
+for (var i = 0; i < minecraftcolors.length; i++) {
+  minecraftcolors_hsva.push(minecraftcolors[i].convertTo(Colour.HSVA));
+}
+var minecraftcolors_xyza = [];
+for (var i = 0; i < minecraftcolors.length; i++) {
+  minecraftcolors_xyza.push(minecraftcolors[i].convertTo(Colour.XYZA));
 }
 
 var map_item;
