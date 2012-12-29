@@ -66,6 +66,11 @@ function reducecolors(ev) {
         closestColorIndex = k;
       }
     }
+
+    if (pixelData.data[index + 3] < 50) {
+      closestColorIndex = 0;
+    }
+
     pixelData.data[index] = minecraftcolors[closestColorIndex].values[0];
     pixelData.data[index + 1] = minecraftcolors[closestColorIndex].values[1];
     pixelData.data[index + 2] = minecraftcolors[closestColorIndex].values[2];
@@ -92,7 +97,7 @@ function createfile(ev) {
 }
 
 var minecraftcolors = [
-  new Colour(Colour.RGBA, [0, 0, 0, 0]),
+  new Colour(Colour.RGBA, [255, 255, 255, 0]),
   new Colour(Colour.RGBA, [89, 125, 39, 255]),
   new Colour(Colour.RGBA, [109,153,48, 255]),
   new Colour(Colour.RGBA, [127,178,56, 255]),
