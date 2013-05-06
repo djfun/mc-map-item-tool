@@ -118,7 +118,7 @@ function handler (req, res) {
                 {
                   name: 'dimension',
                   type: TAG.BYTE,
-                  val: 0
+                  val: 2
                 },
                 {
                   name: 'height',
