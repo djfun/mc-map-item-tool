@@ -83,9 +83,9 @@ function handler (req, res) {
         decodedBody = querystring.parse(body);
         // console.log(JSON.stringify(decodedBody));
         map_item_array = JSON.parse(decodedBody.map_item);
-        x_center = decodedBody.x_center;
-        z_center = decodedBody.z_center;
-        dimension = decodedBody.dimension;
+        x_center = parseInt(decodedBody.x_center, 10);
+        z_center = parseInt(decodedBody.z_center, 10);
+        dimension = parseInt(decodedBody.dimension, 10);
         error = false;
         // console.log(map_item_array.length);
         if (map_item_array.length == 16384) {
