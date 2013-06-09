@@ -68,7 +68,7 @@ function handler (req, res) {
     body +=data;
   });
   req.addListener('end', function () {
-    var error, decodedBody, map_item_array;
+    var error, decodedBody, map_item_array, x_center, z_center, dimension;
     if (req.method == 'GET' && req.url.substr(0, 4) == '/tmp') {
       if (tmp_files.files[req.url.substr(5, 40)]) {
         console.log(myDate.getCurrent() + ' Serve tmp file: ' + req.url);
@@ -83,6 +83,9 @@ function handler (req, res) {
         decodedBody = querystring.parse(body);
         // console.log(JSON.stringify(decodedBody));
         map_item_array = JSON.parse(decodedBody.map_item);
+        x_center = decodedBody.x_center;
+        z_center = decodedBody.z_center;
+        dimension = decodedBody.dimension;
         error = false;
         // console.log(map_item_array.length);
         if (map_item_array.length == 16384) {
@@ -118,7 +121,7 @@ function handler (req, res) {
                 {
                   name: 'dimension',
                   type: TAG.BYTE,
-                  val: 2
+                  val: dimension
                 },
                 {
                   name: 'height',
@@ -133,12 +136,12 @@ function handler (req, res) {
                 {
                   name: 'xCenter',
                   type: TAG.INT,
-                  val: 0
+                  val: x_center
                 },
                 {
                   name: 'zCenter',
                   type: TAG.INT,
-                  val: 0
+                  val: z_center
                 },
                 {
                   name: 'colors',

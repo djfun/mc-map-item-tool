@@ -101,9 +101,16 @@ function reducecolors(ev) {
 }
 
 function createfile(ev) {
+  var xcenter = Cookies.get('xcenter') || '0';
+  var zcenter = Cookies.get('zcenter') || '0';
+  var dim = Cookies.get('dimension') || '0';
+
   if (map_item) {
     $.post('createfile', {
-      map_item: JSON.stringify(map_item)
+      map_item: JSON.stringify(map_item),
+      x_center: xcenter,
+      z_center: zcenter,
+      dimension: dim
     }, function(data) {
       $('#ajaxreply').html(data);
       $('.step-3').addClass('hidden');
