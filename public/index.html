@@ -15,37 +15,63 @@
     </div>
   </div>
   <div class="container">
+    <div class="alert alert-info">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <b>Info: </b>If you encounter problems, please file an issue on <a href="https://github.com/djfun/mc-map-item-tool">github</a> or contact me via <a href="https://twitter.com/djfun">twitter</a> or <a href="https://www.youtube.com/user/netCuRLi">youtube</a>
+    </div>
     <div class="hero-unit">
       <h1>MC Map Item Tool</h1>
-      <p>Your own image on a minecraft map item? Just use this easy four-step tool.</p>
+      <p>Your own image on a minecraft map item? Just use this easy five-step tool.</p>
     </div>
     <form>
       <fieldset>
+        <div class='step-0-image'>
+          <p>Original image:</p>
+          <img id="original_img" width="256" height="256" />
+        </div>
         <div class='step-0-canvas'>
+          <a name="canvas"></a>
+          <p>Map item:</p>
           <canvas id="canvas" width="128" height="128"></canvas>
+          <p><a href="#canvas" class="prev-map" id="prevmap">Previous</a>&nbsp;&nbsp;<a href="#canvas" class="next-map" id="nextmap">Next</a></p>
         </div>
         <div class="step-1">
           <h2>Step 1 - Select an image file</h2>
           <input type='file' name='img' size='65' id='uploadimage' />
         </div>
         <div class="step-2">
-          <h2>Step 2 - Adjust colors for minecraft</h2>
-          <input type='button' name='reducecolors' id='reducecolors' value='Adjust colors' />
+          <h2>Step 2 - Select number of parts you want to split the image into</h2>
+          <label>Horizontal</label>
+          <select name="width_horizontal" id="number_horizontal">
+            <option>1</option>
+          </select>
+          <label>Vertical</label>
+          <select name="width_vertical" id="number_vertical">
+            <option>1</option>
+          </select>
+          <p>If you don't want to split your image into multiple maps, just leave the default value &quot;1&quot;.</p>
+          <input type='button' name='selectnumberofparts' id='selectnumberofparts' value='Select number' />
         </div>
         <div class="step-3">
-          <h2>Step 3 - Let the server create a map file</h2>
-          <input type='button' name='createfile' id='createfile' value='Create file' />
+          <h2>Step 3 - Adjust colors for minecraft</h2>
+          <input type='button' name='reducecolors' id='reducecolors' value='Adjust colors' />
         </div>
         <div class="step-4">
-          <h2>Step 4 - Download the file</h2>
+          <h2>Step 4 - Let the server create a map file</h2>
+          <input type='button' name='createfile' id='createfile' value='Create file' />
+        </div>
+        <div class="step-5">
+          <h2>Step 5 - Download the file</h2>
           <span id='ajaxreply'></span>
           <p>and then replace the map file in the save folder (See also <a href="faq.html#q1">What do I do with the map file?</a>)</p> 
         </div>
       </fieldset>
     </form>
   </div>
+  <canvas id="canvas_full" style="display: none;"></canvas>
   <script src="Colour.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+  <!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>-->
+  <script src="jquery-1.10.2.min.js"></script>
   <script src="main.js"></script>
   <script src="js/bootstrap.min.js"></script>
   <script src="cookies.min.js"></script>
