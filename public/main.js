@@ -115,7 +115,7 @@ function prevMap(ev) {
   drawCanvas(map_x, map_y);
 }
 function nextMap(ev) {
-  if (!(x === map_parts_horizontal - 1 && y === map_parts_vertical - 1)) {
+  if (!(map_x === map_parts_horizontal - 1 && map_y === map_parts_vertical - 1)) {
     if (map_x === map_parts_horizontal - 1) {
       map_y++;
       map_x = 0;
