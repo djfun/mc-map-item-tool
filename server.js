@@ -90,7 +90,7 @@ function handler (req, res) {
         // console.log(map_item_array.length);
         if (map_item_array.length == 16384) {
           for (var i = 0; i < map_item_array.length; i++) {
-            if (map_item_array[i] > 55) {
+            if (map_item_array[i] > 128) {
               error = true;
             }
           }

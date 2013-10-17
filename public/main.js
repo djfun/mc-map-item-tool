@@ -19,8 +19,8 @@ function draw(ev) {
     url.revokeObjectURL(src);
 
     // calculate possible numbers for next step
-    var highest_number_vertical = img.height / 128;
-    var highest_number_horizontal = img.width / 128;
+    var highest_number_vertical = Math.min(img.height / 128, 5);
+    var highest_number_horizontal = Math.min(img.width / 128, 5);
     
     $('#number_vertical').html('<option>1</option>');
     $('#number_horizontal').html('<option>1</option>');
@@ -133,6 +133,7 @@ function reducecolors(ev) {
   var index;
   var closestDistance, closestColorIndex, distance;
   var compareColors;
+  var newColors = Cookies.get('newColors') || 'no';
   all_maps_data = [];
   for (var i = 0; i < pixelData.data.length / 4; i++) {
     index = i * 4;
@@ -143,23 +144,34 @@ function reducecolors(ev) {
 
     if (colourSpace == 'laba') {
       c = c.convertTo(Colour.LABA);
-      compareColors = minecraftcolors_laba;
+      compareColors = newColors == 'no' ? minecraftcolors_laba : minecraftcolors_new_laba;
     } else if (colourSpace == 'rgba') {
-      compareColors = minecraftcolors;
+      compareColors = newColors == 'no' ? minecraftcolors : minecraftcolors_new;
     } else if (colourSpace == 'xyza') {
       c = c.convertTo(Colour.XYZA);
-      compareColors = minecraftcolors_xyza;
+      compareColors = newColors == 'no' ? minecraftcolors_xyza : minecraftcolors_xyza;
     } else if (colourSpace == 'hsva') {
       c = c.convertTo(Colour.HSVA);
-      compareColors = minecraftcolors_hsva;
+      compareColors = newColors == 'no' ? minecraftcolors_hsva : minecraftcolors_hsva;
     }
     
     closestDistance = Number.MAX_VALUE;
-    for (var k = 0; k < minecraftcolors.length; k++) {
-      distance = c.distanceTo(compareColors[k]);
-      if (distance < closestDistance) {
-        closestDistance = distance;
-        closestColorIndex = k;
+    var k = 0;
+    if (newColors == 'no') {
+      for (k = 0; k < minecraftcolors.length; k++) {
+        distance = c.distanceTo(compareColors[k]);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestColorIndex = k;
+        }
+      }
+    } else {
+      for (k = 0; k < minecraftcolors_new.length; k++) {
+        distance = c.distanceTo(compareColors[k]);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestColorIndex = k;
+        }
       }
     }
 
@@ -167,10 +179,17 @@ function reducecolors(ev) {
       closestColorIndex = 0;
     }
 
-    pixelData.data[index] = minecraftcolors[closestColorIndex].values[0];
-    pixelData.data[index + 1] = minecraftcolors[closestColorIndex].values[1];
-    pixelData.data[index + 2] = minecraftcolors[closestColorIndex].values[2];
-    pixelData.data[index + 3] = minecraftcolors[closestColorIndex].values[3];
+    if (newColors == 'no') {
+      pixelData.data[index] = minecraftcolors_new[closestColorIndex].values[0];
+      pixelData.data[index + 1] = minecraftcolors_new[closestColorIndex].values[1];
+      pixelData.data[index + 2] = minecraftcolors_new[closestColorIndex].values[2];
+      pixelData.data[index + 3] = minecraftcolors_new[closestColorIndex].values[3];
+    } else {
+      pixelData.data[index] = minecraftcolors_new[closestColorIndex].values[0];
+      pixelData.data[index + 1] = minecraftcolors_new[closestColorIndex].values[1];
+      pixelData.data[index + 2] = minecraftcolors_new[closestColorIndex].values[2];
+      pixelData.data[index + 3] = minecraftcolors_new[closestColorIndex].values[3];
+    }
 
     all_maps_data.push(closestColorIndex + 3);
     // console.log(c);
@@ -294,6 +313,148 @@ for (var i = 0; i < minecraftcolors.length; i++) {
   minecraftcolors_xyza.push(minecraftcolors[i].convertTo(Colour.XYZA));
 }
 
+var minecraftcolors_new = [
+  new Colour(Colour.RGBA, [255, 255, 255, 0]),
+  new Colour(Colour.RGBA, [89, 125, 39, 255]),
+  new Colour(Colour.RGBA, [109,153,48, 255]),
+  new Colour(Colour.RGBA, [127,178,56, 255]),
+  new Colour(Colour.RGBA, [109,153,48, 255]),
+  new Colour(Colour.RGBA, [174,164,115, 255]),
+  new Colour(Colour.RGBA, [213,201,140, 255]),
+  new Colour(Colour.RGBA, [247,233,163, 255]),
+  new Colour(Colour.RGBA, [213,201,140, 255]),
+  new Colour(Colour.RGBA, [117,117,117, 255]),
+  new Colour(Colour.RGBA, [144,144,144, 255]),
+  new Colour(Colour.RGBA, [167,167,167, 255]),
+  new Colour(Colour.RGBA, [144,144,144, 255]),
+  new Colour(Colour.RGBA, [180,0,0, 255]),
+  new Colour(Colour.RGBA, [220,0,0, 255]),
+  new Colour(Colour.RGBA, [255,0,0, 255]),
+  new Colour(Colour.RGBA, [220,0,0, 255]),
+  new Colour(Colour.RGBA, [112,112,180, 255]),
+  new Colour(Colour.RGBA, [138,138,220, 255]),
+  new Colour(Colour.RGBA, [160,160,255, 255]),
+  new Colour(Colour.RGBA, [138,138,220, 255]),
+  new Colour(Colour.RGBA, [117,117,117, 255]),
+  new Colour(Colour.RGBA, [144,144,144, 255]),
+  new Colour(Colour.RGBA, [167,167,167, 255]),
+  new Colour(Colour.RGBA, [144,144,144, 255]),
+  new Colour(Colour.RGBA, [0,87,0, 255]),
+  new Colour(Colour.RGBA, [0,106,0, 255]),
+  new Colour(Colour.RGBA, [0,124,0, 255]),
+  new Colour(Colour.RGBA, [0,106,0, 255]),
+  new Colour(Colour.RGBA, [180,180,180, 255]),
+  new Colour(Colour.RGBA, [220,220,220, 255]),
+  new Colour(Colour.RGBA, [255,255,255, 255]),
+  new Colour(Colour.RGBA, [220,220,220, 255]),
+  new Colour(Colour.RGBA, [115,118,129, 255]),
+  new Colour(Colour.RGBA, [141,144,158, 255]),
+  new Colour(Colour.RGBA, [164,168,184, 255]),
+  new Colour(Colour.RGBA, [141,144,158, 255]),
+  new Colour(Colour.RGBA, [129,74,33, 255]),
+  new Colour(Colour.RGBA, [157,91,40, 255]),
+  new Colour(Colour.RGBA, [183,106,47, 255]),
+  new Colour(Colour.RGBA, [157,91,40, 255]),
+  new Colour(Colour.RGBA, [79,79,79, 255]),
+  new Colour(Colour.RGBA, [96,96,96, 255]),
+  new Colour(Colour.RGBA, [112,112,112, 255]),
+  new Colour(Colour.RGBA, [96,96,96, 255]),
+  new Colour(Colour.RGBA, [45,45,180, 255]),
+  new Colour(Colour.RGBA, [55,55,220, 255]),
+  new Colour(Colour.RGBA, [64,64,255, 255]),
+  new Colour(Colour.RGBA, [55,55,220, 255]),
+  new Colour(Colour.RGBA, [73,58,35, 255]),
+  new Colour(Colour.RGBA, [89,71,43, 255]),
+  new Colour(Colour.RGBA, [104,83,50, 255]),
+  new Colour(Colour.RGBA, [89,71,43, 255]),
+  // NEW COLOURS FOR snapshot 13w42a
+  new Colour(Colour.RGBA, [178, 178, 178, 255]),
+  new Colour(Colour.RGBA, [217, 217, 217, 255]),
+  new Colour(Colour.RGBA, [252, 252, 252, 255]),
+  new Colour(Colour.RGBA, [217, 217, 217, 255]),
+  new Colour(Colour.RGBA, [150, 88, 36, 255]),
+  new Colour(Colour.RGBA, [184, 108, 43, 255]),
+  new Colour(Colour.RGBA, [213, 126, 50, 255]),
+  new Colour(Colour.RGBA, [184, 108, 43, 255]),
+  new Colour(Colour.RGBA, [124, 52, 150, 255]),
+  new Colour(Colour.RGBA, [151, 64, 184, 255]),
+  new Colour(Colour.RGBA, [176, 75, 213, 255]),
+  new Colour(Colour.RGBA, [151, 64, 184, 255]),
+  new Colour(Colour.RGBA, [71, 107, 150, 255]),
+  new Colour(Colour.RGBA, [87, 130, 184, 255]),
+  new Colour(Colour.RGBA, [101, 151, 213, 255]),
+  new Colour(Colour.RGBA, [87, 130, 184, 255]),
+  new Colour(Colour.RGBA, [159, 159, 36, 255]),
+  new Colour(Colour.RGBA, [195, 195, 43, 255]),
+  new Colour(Colour.RGBA, [226, 226, 50, 255]),
+  new Colour(Colour.RGBA, [195, 195, 43, 255]),
+  new Colour(Colour.RGBA, [88, 142, 17, 255]),
+  new Colour(Colour.RGBA, [108, 174, 21, 255]),
+  new Colour(Colour.RGBA, [126, 202, 25, 255]),
+  new Colour(Colour.RGBA, [108, 174, 21, 255]),
+  new Colour(Colour.RGBA, [168, 88, 115, 255]),
+  new Colour(Colour.RGBA, [206, 108, 140, 255]),
+  new Colour(Colour.RGBA, [239, 126, 163, 255]),
+  new Colour(Colour.RGBA, [206, 108, 140, 255]),
+  new Colour(Colour.RGBA, [52, 52, 52, 255]),
+  new Colour(Colour.RGBA, [64, 64, 64, 255]),
+  new Colour(Colour.RGBA, [75, 75, 75, 255]),
+  new Colour(Colour.RGBA, [64, 64, 64, 255]),
+  new Colour(Colour.RGBA, [107, 107, 107, 255]),
+  new Colour(Colour.RGBA, [130, 130, 130, 255]),
+  new Colour(Colour.RGBA, [151, 151, 151, 255]),
+  new Colour(Colour.RGBA, [130, 130, 130, 255]),
+  new Colour(Colour.RGBA, [52, 88, 107, 255]),
+  new Colour(Colour.RGBA, [64, 108, 130, 255]),
+  new Colour(Colour.RGBA, [75, 126, 151, 255]),
+  new Colour(Colour.RGBA, [64, 108, 130, 255]),
+  new Colour(Colour.RGBA, [88, 43, 124, 255]),
+  new Colour(Colour.RGBA, [108, 53, 151, 255]),
+  new Colour(Colour.RGBA, [126, 62, 176, 255]),
+  new Colour(Colour.RGBA, [108, 53, 151, 255]),
+  new Colour(Colour.RGBA, [36, 52, 124, 255]),
+  new Colour(Colour.RGBA, [43, 64, 151, 255]),
+  new Colour(Colour.RGBA, [50, 75, 176, 255]),
+  new Colour(Colour.RGBA, [43, 64, 151, 255]),
+  new Colour(Colour.RGBA, [71, 52, 36, 255]),
+  new Colour(Colour.RGBA, [87, 64, 43, 255]),
+  new Colour(Colour.RGBA, [101, 75, 50, 255]),
+  new Colour(Colour.RGBA, [87, 64, 43, 255]),
+  new Colour(Colour.RGBA, [71, 88, 36, 255]),
+  new Colour(Colour.RGBA, [87, 108, 43, 255]),
+  new Colour(Colour.RGBA, [101, 126, 50, 255]),
+  new Colour(Colour.RGBA, [87, 108, 43, 255]),
+  new Colour(Colour.RGBA, [107, 36, 36, 255]),
+  new Colour(Colour.RGBA, [130, 43, 43, 255]),
+  new Colour(Colour.RGBA, [151, 50, 50, 255]),
+  new Colour(Colour.RGBA, [130, 43, 43, 255]),
+  new Colour(Colour.RGBA, [17, 17, 17, 255]),
+  new Colour(Colour.RGBA, [21, 21, 21, 255]),
+  new Colour(Colour.RGBA, [25, 25, 25, 255]),
+  new Colour(Colour.RGBA, [21, 21, 21, 255]),
+  new Colour(Colour.RGBA, [174, 166, 53, 255]),
+  new Colour(Colour.RGBA, [212, 203, 65, 255]),
+  new Colour(Colour.RGBA, [247, 235, 76, 255]),
+  new Colour(Colour.RGBA, [212, 203, 65, 255]),
+  new Colour(Colour.RGBA, [63, 152, 148, 255]),
+  new Colour(Colour.RGBA, [78, 186, 181, 255]),
+  new Colour(Colour.RGBA, [91, 216, 210, 255]),
+  new Colour(Colour.RGBA, [78, 186, 181, 255])
+];
+
+var minecraftcolors_new_laba = [];
+for (var i = 0; i < minecraftcolors_new.length; i++) {
+  minecraftcolors_new_laba.push(minecraftcolors_new[i].convertTo(Colour.LABA));
+}
+var minecraftcolors_new_hsva = [];
+for (var i = 0; i < minecraftcolors_new.length; i++) {
+  minecraftcolors_new_hsva.push(minecraftcolors_new[i].convertTo(Colour.HSVA));
+}
+var minecraftcolors_new_xyza = [];
+for (var i = 0; i < minecraftcolors_new.length; i++) {
+  minecraftcolors_new_xyza.push(minecraftcolors_new[i].convertTo(Colour.XYZA));
+}
+
 var map_item;
 var map_parts_vertical;
 var map_parts_horizontal;
@@ -320,3 +481,5 @@ $(document).ready(function() {
   $('.step-4').addClass('hidden');
   $('.step-5').addClass('hidden');
 });
+
+
