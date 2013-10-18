@@ -158,7 +158,7 @@ function reducecolors(ev) {
     closestDistance = Number.MAX_VALUE;
     var k = 0;
     if (newColors == 'no') {
-      for (k = 0; k < minecraftcolors.length; k++) {
+      for (k = 1; k < minecraftcolors.length; k++) {
         distance = c.distanceTo(compareColors[k]);
         if (distance < closestDistance) {
           closestDistance = distance;
@@ -166,7 +166,7 @@ function reducecolors(ev) {
         }
       }
     } else {
-      for (k = 0; k < minecraftcolors_new.length; k++) {
+      for (k = 1; k < minecraftcolors_new.length; k++) {
         distance = c.distanceTo(compareColors[k]);
         if (distance < closestDistance) {
           closestDistance = distance;
