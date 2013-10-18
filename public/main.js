@@ -211,10 +211,15 @@ function createfile(ev) {
     for (var i = 0; i < map_parts_horizontal; i++) {
       for (var j = 0; j < map_parts_vertical; j++) {
         map_item = [];
+        var co;
         for (var k = 0; k < 128; k++) {
           for (var l = 0; l < 128; l++) {
-            map_item.push(all_maps_data[((j * map_parts_horizontal * 128 * 128) + i * 128) +
-              l + map_parts_horizontal * 128 * k]);
+            co = all_maps_data[((j * map_parts_horizontal * 128 * 128) + i * 128) +
+              l + map_parts_horizontal * 128 * k];
+            if (co > 127) {
+              co = co - 256;
+            }
+            map_item.push(co);
           }
         }
         (function(){
@@ -369,9 +374,9 @@ var minecraftcolors_new = [
   new Colour(Colour.RGBA, [89,71,43, 255]),
   // NEW COLOURS FOR snapshot 13w42a
   new Colour(Colour.RGBA, [178, 178, 178, 255]),
-  new Colour(Colour.RGBA, [217, 217, 217, 255]),
-  new Colour(Colour.RGBA, [252, 252, 252, 255]),
-  new Colour(Colour.RGBA, [217, 217, 217, 255]),
+  new Colour(Colour.RGBA, [220, 220, 220, 255]),
+  new Colour(Colour.RGBA, [255, 255, 255, 255]),
+  new Colour(Colour.RGBA, [220, 220, 220, 255]),
   new Colour(Colour.RGBA, [150, 88, 36, 255]),
   new Colour(Colour.RGBA, [184, 108, 43, 255]),
   new Colour(Colour.RGBA, [213, 126, 50, 255]),
@@ -439,7 +444,23 @@ var minecraftcolors_new = [
   new Colour(Colour.RGBA, [63, 152, 148, 255]),
   new Colour(Colour.RGBA, [78, 186, 181, 255]),
   new Colour(Colour.RGBA, [91, 216, 210, 255]),
-  new Colour(Colour.RGBA, [78, 186, 181, 255])
+  new Colour(Colour.RGBA, [78, 186, 181, 255]),
+  new Colour(Colour.RGBA, [52, 90, 180, 255]),
+  new Colour(Colour.RGBA, [63, 110, 220, 255]),
+  new Colour(Colour.RGBA, [74, 128, 255, 255]),
+  new Colour(Colour.RGBA, [63, 110, 220, 255]),
+  new Colour(Colour.RGBA, [0, 153, 40, 255]),
+  new Colour(Colour.RGBA, [0, 187, 50, 255]),
+  new Colour(Colour.RGBA, [0, 217, 58, 255]),
+  new Colour(Colour.RGBA, [0, 187, 50, 255]),
+  new Colour(Colour.RGBA, [14, 14, 21, 255]),
+  new Colour(Colour.RGBA, [18, 17, 26, 255]),
+  new Colour(Colour.RGBA, [21, 20, 31, 255]),
+  new Colour(Colour.RGBA, [18, 17, 26, 255]),
+  new Colour(Colour.RGBA, [79, 1, 0, 255]),
+  new Colour(Colour.RGBA, [96, 1, 0, 255]),
+  new Colour(Colour.RGBA, [112, 2, 0, 255]),
+  new Colour(Colour.RGBA, [96, 1, 0, 255])
 ];
 
 var minecraftcolors_new_laba = [];
