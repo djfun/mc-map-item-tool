@@ -14,6 +14,8 @@ var zlib = require('zlib');
 
 var crypto = require('crypto');
 
+var archiver = require('archiver');
+
 
 // on start delete all files in ./tmp
 fs.readdir('./public/tmp', function(err, files) {
@@ -45,13 +47,21 @@ var tmp_files = {
     var time = (new Date()).getTime();
     for (var hash in this.files) {
       if (this.files[hash] < time - 300000) {
-        delete_tmp_files(hash + '.dat');
+        delete_tmp_files(hash);
         delete this.files[hash];
       }
     }
   },
   files: {}
 };
+
+function NotInTmpFilesException(value) {
+  this.value = value;
+  this.message = " is not in tmp_files";
+  this.toString = function() {
+    return 'NotInTmpFilesException: ' + this.value + this.message;
+  };
+}
 
 app.listen(process.env.PORT || 8080, process.env.HOST || 'localhost');
 
@@ -68,12 +78,13 @@ function handler (req, res) {
     body +=data;
   });
   req.addListener('end', function () {
-    var error, decodedBody, map_item_array, x_center, z_center, dimension;
+    var error, decodedBody, map_item_array, x_center, z_center, dimension, randomid;
     if (req.method == 'GET' && req.url.substr(0, 4) == '/tmp') {
-      if (tmp_files.files[req.url.substr(5, 40)]) {
+      if (tmp_files.files[req.url.substr(5)]) {
         console.log(myDate.getCurrent() + ' Serve tmp file: ' + req.url);
+        var downloadfilename = req.url.slice(-3) == 'dat' ? 'map_0.dat' : 'map_items.zip';
         file.serveFile(req.url, 200,
-          {'Content-Disposition': 'attachment; filename="map_0.dat"'}, req, res);
+          {'Content-Disposition': 'attachment; filename="' + downloadfilename + '"'}, req, res);
       } else {
         res.writeHead(404);
         res.end("File doesn't exist");
@@ -86,6 +97,10 @@ function handler (req, res) {
         x_center = parseInt(decodedBody.x_center, 10);
         z_center = parseInt(decodedBody.z_center, 10);
         dimension = parseInt(decodedBody.dimension, 10);
+        randomid = decodedBody.randomid;
+        if (randomid !== "") {
+          randomid+= "_";
+        }
         error = false;
         // console.log(map_item_array.length);
         if (map_item_array.length == 16384) {
@@ -155,8 +170,8 @@ function handler (req, res) {
         var b = NbtWriter.writeTag(map_file);
         var shasum = crypto.createHash('sha1');
         shasum.update(b);
-        var filename = shasum.digest('hex');
-        tmp_files.addFile(filename);
+        var filename = randomid + shasum.digest('hex');
+        tmp_files.addFile(filename + '.dat');
         zlib.gzip(b, function(err, data) {
           if (err) {
             res.writeHead(500);
@@ -169,7 +184,8 @@ function handler (req, res) {
                 console.log(myDate.getCurrent() + ' Map file written to disk: ' + filename + '.dat');
                 res.setHeader('Content-Type', 'text/html');
                 res.writeHead(200);
-                res.end('<a href="tmp/' + filename + '.dat">Download</a>');
+                res.end(filename);
+                // res.end('<a href="tmp/' + filename + '.dat">Download</a>');
               } else {
                 res.writeHead(500);
                 res.end("Internal server error");
@@ -182,6 +198,43 @@ function handler (req, res) {
         console.log(myDate.getCurrent() + ' 400 Bad request');
         res.writeHead(400);
         res.end("Bad request");
+      }
+    } else if (req.method == 'POST' && req.url == '/createzip') {
+      var mapfiles, zipname;
+      try {
+        decodedBody = querystring.parse(body);
+        mapfiles = JSON.parse(decodedBody.mapfiles);
+        zipname = decodedBody.zipname;
+        tmp_files.addFile(zipname + '.zip');
+        var output = fs.createWriteStream('public/tmp/' + zipname + '.zip');
+        var archive = archiver('zip');
+        output.on('close', function() {
+          console.log(myDate.getCurrent() + ' Zip file written to disk: ' + zipname + '.zip');
+          res.setHeader('Content-Type', 'text/html');
+          res.writeHead(200);
+          res.end(zipname);
+        });
+        archive.on('error', function(err) {
+          throw err;
+        });
+        archive.pipe(output);
+        for (var j = 0; j < mapfiles.length; j++) {
+          if (!tmp_files.files[mapfiles[j] + '.dat']) {
+            throw new NotInTmpFilesException(mapfiles[j]);
+          }
+          archive.append(fs.createReadStream('public/tmp/' + mapfiles[j] + '.dat'), { name: 'map_' + j + '.dat' });
+        }
+        archive.finalize(function(err, bytes) {
+          if (err) {
+            throw err;
+          }
+          console.log(myDate.getCurrent() + ' Zip file finalized: ' + bytes + ' total bytes');
+        });
+      } catch (e) {
+        error = true;
+        console.log(myDate.getCurrent() + ' Error: ' + e.toString());
+        res.writeHead(500);
+        res.end("Internal server error");
       }
     } else {
       file.serve(req, res);

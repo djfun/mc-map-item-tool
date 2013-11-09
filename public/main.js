@@ -205,6 +205,11 @@ function createfile(ev) {
   var zcenter = Cookies.get('zcenter') || '0';
   var dim = Cookies.get('dimension') || '0';
 
+  var randomid = "";
+  if (map_parts_horizontal > 1 || map_parts_vertical > 1) {
+    randomid = makerandomid();
+  }
+
   var responses = [];
   var responses_count = 0;
   if (all_maps_data) {
@@ -229,18 +234,30 @@ function createfile(ev) {
             map_item: JSON.stringify(map_item),
             x_center: xcenter,
             z_center: zcenter,
-            dimension: dim
+            dimension: dim,
+            randomid: randomid
           }, function(data) {
             responses[y + map_parts_vertical * x] = data;
             responses_count++;
             if (responses_count === map_parts_horizontal * map_parts_vertical) {
               var response_text = "";
-              for (var m = 0; m < responses.length; m++) {
-                response_text+= responses[m] + " (map_" + m + ".dat)<br />";
+              if (responses_count == 1) {
+                response_text = '<a href="tmp/' + responses[0] + '.dat">Download</a>' + " (map_0.dat)";
+                $('#ajaxreply').html(response_text);
+                $('.step-4').addClass('hidden');
+                $('.step-5').removeClass('hidden');
+              } else {
+                $.post('createzip', {
+                  mapfiles: JSON.stringify(responses),
+                  zipname: randomid
+                }, function (data) {
+                  console.log(data);
+                  response_text = '<a href="tmp/' + data + '.zip">Download</a>' + " (Zip archive with map files)";
+                  $('#ajaxreply').html(response_text);
+                  $('.step-4').addClass('hidden');
+                  $('.step-5').removeClass('hidden');
+                });
               }
-              $('#ajaxreply').html(response_text);
-              $('.step-4').addClass('hidden');
-              $('.step-5').removeClass('hidden');
             }
           });
         }());
@@ -474,6 +491,17 @@ for (var i = 0; i < minecraftcolors_new.length; i++) {
 var minecraftcolors_new_xyza = [];
 for (var i = 0; i < minecraftcolors_new.length; i++) {
   minecraftcolors_new_xyza.push(minecraftcolors_new[i].convertTo(Colour.XYZA));
+}
+
+function makerandomid()
+{
+  var text = "";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  for( var i=0; i < 10; i++ )
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+  return text;
 }
 
 var map_item;
