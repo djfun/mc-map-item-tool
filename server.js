@@ -1,5 +1,6 @@
 var node_static = require('node-static');
 var app = require('http').createServer(handler);
+var url  = require('url');
 
 var querystring = require('querystring');
 
@@ -78,13 +79,25 @@ function handler (req, res) {
     body +=data;
   });
   req.addListener('end', function () {
-    var error, decodedBody, map_item_array, x_center, z_center, dimension, randomid;
+    var error, decodedBody, map_item_array, x_center, z_center, dimension, randomid, mapnumber;
     if (req.method == 'GET' && req.url.substr(0, 4) == '/tmp') {
-      if (tmp_files.files[req.url.substr(5)]) {
-        console.log(myDate.getCurrent() + ' Serve tmp file: ' + req.url);
-        var downloadfilename = req.url.slice(-3) == 'dat' ? 'map_0.dat' : 'map_items.zip';
-        file.serveFile(req.url, 200,
-          {'Content-Disposition': 'attachment; filename="' + downloadfilename + '"'}, req, res);
+      var url_parts = url.parse(req.url, true);
+      var query = url_parts.query;
+      var pathname = url_parts.pathname;
+      if (tmp_files.files[pathname.substr(5)]) {
+        try {
+          console.log(myDate.getCurrent() + ' Serve tmp file: ' + pathname);
+          
+          mapnumber = parseInt(query.mapnumber, 10) || 0;
+          var downloadfilename = pathname.slice(-3) == 'dat' ? 'map_' + mapnumber + '.dat' : 'map_items.zip';
+          file.serveFile(pathname, 200,
+            {'Content-Disposition': 'attachment; filename="' + downloadfilename + '"'}, req, res);
+        } catch (e) {
+          console.log(myDate.getCurrent() + ' Error:');
+          console.log(e);
+          res.writeHead(500);
+          res.end("Internal server error");
+        }
       } else {
         res.writeHead(404);
         res.end("File doesn't exist");
@@ -205,6 +218,7 @@ function handler (req, res) {
         decodedBody = querystring.parse(body);
         mapfiles = JSON.parse(decodedBody.mapfiles);
         zipname = decodedBody.zipname;
+        mapnumber = parseInt(decodedBody.mapnumber, 10) || 0;
         tmp_files.addFile(zipname + '.zip');
         var output = fs.createWriteStream('public/tmp/' + zipname + '.zip');
         var archive = archiver('zip');
@@ -218,11 +232,13 @@ function handler (req, res) {
           throw err;
         });
         archive.pipe(output);
+        var filenumber;
         for (var j = 0; j < mapfiles.length; j++) {
           if (!tmp_files.files[mapfiles[j] + '.dat']) {
             throw new NotInTmpFilesException(mapfiles[j]);
           }
-          archive.append(fs.createReadStream('public/tmp/' + mapfiles[j] + '.dat'), { name: 'map_' + j + '.dat' });
+          filenumber = mapnumber + j;
+          archive.append(fs.createReadStream('public/tmp/' + mapfiles[j] + '.dat'), { name: 'map_' + filenumber + '.dat' });
         }
         archive.finalize(function(err, bytes) {
           if (err) {

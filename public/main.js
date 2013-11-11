@@ -205,6 +205,8 @@ function createfile(ev) {
   var zcenter = Cookies.get('zcenter') || '0';
   var dim = Cookies.get('dimension') || '0';
 
+  var mapnumber = parseInt($('#map_number').val(), 10) || 0;
+
   var randomid = "";
   if (map_parts_horizontal > 1 || map_parts_vertical > 1) {
     randomid = makerandomid();
@@ -242,14 +244,15 @@ function createfile(ev) {
             if (responses_count === map_parts_horizontal * map_parts_vertical) {
               var response_text = "";
               if (responses_count == 1) {
-                response_text = '<a href="tmp/' + responses[0] + '.dat">Download</a>' + " (map_0.dat)";
+                response_text = '<a href="tmp/' + responses[0] + '.dat?mapnumber=' + mapnumber + '">Download</a>' + " (map_" + mapnumber + ".dat)";
                 $('#ajaxreply').html(response_text);
                 $('.step-4').addClass('hidden');
                 $('.step-5').removeClass('hidden');
               } else {
                 $.post('createzip', {
                   mapfiles: JSON.stringify(responses),
-                  zipname: randomid
+                  zipname: randomid,
+                  mapnumber: mapnumber
                 }, function (data) {
                   console.log(data);
                   response_text = '<a href="tmp/' + data + '.zip">Download</a>' + " (Zip archive with map files)";
