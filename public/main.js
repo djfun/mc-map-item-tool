@@ -19,8 +19,8 @@ function draw(ev) {
     url.revokeObjectURL(src);
 
     // calculate possible numbers for next step
-    var highest_number_vertical = Math.min(img.height / 128, 5);
-    var highest_number_horizontal = Math.min(img.width / 128, 5);
+    var highest_number_vertical = img.height / 128;
+    var highest_number_horizontal = img.width / 128;
     
     $('#number_vertical').html('<option>1</option>');
     $('#number_horizontal').html('<option>1</option>');
