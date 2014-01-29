@@ -1,0 +1,27 @@
+{
+  "name": "minecraft-map-item-tool",
+  "version": "1.0.0",
+  "description": "web tool for converting images to minecraft maps",
+  "main": "server.js",
+  "scripts": {
+    "test": "grunt test --verbose",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/djfun/mc-map-item-tool.git"
+  },
+  "author": "Martin Kaistra",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/djfun/mc-map-item-tool/issues"
+  },
+  "homepage": "https://github.com/djfun/mc-map-item-tool",
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-casperjs": "~1.4.0"
+  }
+}
