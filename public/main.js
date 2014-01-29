@@ -1,11 +1,11 @@
 var ctx_full = document.getElementById('canvas_full').getContext('2d'),
-    ctx = document.getElementById('canvas').getContext('2d'),
-    canvas = document.getElementById('canvas'),
-    canvas_full = document.getElementById('canvas_full'),
-    img,
-    original_img = document.getElementById('original_img'),
-    url = window.URL || window.webkitURL,
-    src;
+  ctx = document.getElementById('canvas').getContext('2d'),
+  canvas = document.getElementById('canvas'),
+  canvas_full = document.getElementById('canvas_full'),
+  img,
+  original_img = document.getElementById('original_img'),
+  url = window.URL || window.webkitURL,
+  src;
 
 function draw(ev) {
   var f = document.getElementById("uploadimage").files[0];
@@ -21,7 +21,7 @@ function draw(ev) {
     // calculate possible numbers for next step
     var highest_number_vertical = img.height / 128;
     var highest_number_horizontal = img.width / 128;
-    
+
     $('#number_vertical').html('<option>1</option>');
     $('#number_horizontal').html('<option>1</option>');
 
@@ -47,7 +47,8 @@ function selectnumber(ev) {
 
   var canvasCopy = document.createElement("canvas");
   var copyContext = canvasCopy.getContext("2d");
-  var maxWidth = 128 * map_parts_horizontal, maxHeight = 128 * map_parts_vertical;
+  var maxWidth = 128 * map_parts_horizontal,
+    maxHeight = 128 * map_parts_vertical;
 
   var ratio = 1;
   var spaceW = 0;
@@ -114,6 +115,7 @@ function prevMap(ev) {
   }
   drawCanvas(map_x, map_y);
 }
+
 function nextMap(ev) {
   if (!(map_x === map_parts_horizontal - 1 && map_y === map_parts_vertical - 1)) {
     if (map_x === map_parts_horizontal - 1) {
@@ -137,10 +139,11 @@ function reducecolors(ev) {
   all_maps_data = [];
   for (var i = 0; i < pixelData.data.length / 4; i++) {
     index = i * 4;
-    c = new Colour( Colour.RGBA, [pixelData.data[index],
-     pixelData.data[index + 1],
-     pixelData.data[index + 2],
-     pixelData.data[index + 3]] );
+    c = new Colour(Colour.RGBA, [pixelData.data[index],
+      pixelData.data[index + 1],
+      pixelData.data[index + 2],
+      pixelData.data[index + 3]
+    ]);
 
     if (colourSpace == 'laba') {
       c = c.convertTo(Colour.LABA);
@@ -154,7 +157,7 @@ function reducecolors(ev) {
       c = c.convertTo(Colour.HSVA);
       compareColors = newColors == 'no' ? minecraftcolors_hsva : minecraftcolors_hsva;
     }
-    
+
     closestDistance = Number.MAX_VALUE;
     var k = 0;
     if (newColors == 'no') {
@@ -229,7 +232,7 @@ function createfile(ev) {
             map_item.push(co);
           }
         }
-        (function(){
+        (function() {
           var x = i;
           var y = j;
           $.post('createfile', {
@@ -253,7 +256,7 @@ function createfile(ev) {
                   mapfiles: JSON.stringify(responses),
                   zipname: randomid,
                   mapnumber: mapnumber
-                }, function (data) {
+                }, function(data) {
                   console.log(data);
                   response_text = '<a href="tmp/' + data + '.zip">Download</a>' + " (Zip archive with map files)";
                   $('#ajaxreply').html(response_text);
@@ -272,57 +275,57 @@ function createfile(ev) {
 var minecraftcolors = [
   new Colour(Colour.RGBA, [255, 255, 255, 0]),
   new Colour(Colour.RGBA, [89, 125, 39, 255]),
-  new Colour(Colour.RGBA, [109,153,48, 255]),
-  new Colour(Colour.RGBA, [127,178,56, 255]),
-  new Colour(Colour.RGBA, [109,153,48, 255]),
-  new Colour(Colour.RGBA, [174,164,115, 255]),
-  new Colour(Colour.RGBA, [213,201,140, 255]),
-  new Colour(Colour.RGBA, [247,233,163, 255]),
-  new Colour(Colour.RGBA, [213,201,140, 255]),
-  new Colour(Colour.RGBA, [117,117,117, 255]),
-  new Colour(Colour.RGBA, [144,144,144, 255]),
-  new Colour(Colour.RGBA, [167,167,167, 255]),
-  new Colour(Colour.RGBA, [144,144,144, 255]),
-  new Colour(Colour.RGBA, [180,0,0, 255]),
-  new Colour(Colour.RGBA, [220,0,0, 255]),
-  new Colour(Colour.RGBA, [255,0,0, 255]),
-  new Colour(Colour.RGBA, [220,0,0, 255]),
-  new Colour(Colour.RGBA, [112,112,180, 255]),
-  new Colour(Colour.RGBA, [138,138,220, 255]),
-  new Colour(Colour.RGBA, [160,160,255, 255]),
-  new Colour(Colour.RGBA, [138,138,220, 255]),
-  new Colour(Colour.RGBA, [117,117,117, 255]),
-  new Colour(Colour.RGBA, [144,144,144, 255]),
-  new Colour(Colour.RGBA, [167,167,167, 255]),
-  new Colour(Colour.RGBA, [144,144,144, 255]),
-  new Colour(Colour.RGBA, [0,87,0, 255]),
-  new Colour(Colour.RGBA, [0,106,0, 255]),
-  new Colour(Colour.RGBA, [0,124,0, 255]),
-  new Colour(Colour.RGBA, [0,106,0, 255]),
-  new Colour(Colour.RGBA, [180,180,180, 255]),
-  new Colour(Colour.RGBA, [220,220,220, 255]),
-  new Colour(Colour.RGBA, [255,255,255, 255]),
-  new Colour(Colour.RGBA, [220,220,220, 255]),
-  new Colour(Colour.RGBA, [115,118,129, 255]),
-  new Colour(Colour.RGBA, [141,144,158, 255]),
-  new Colour(Colour.RGBA, [164,168,184, 255]),
-  new Colour(Colour.RGBA, [141,144,158, 255]),
-  new Colour(Colour.RGBA, [129,74,33, 255]),
-  new Colour(Colour.RGBA, [157,91,40, 255]),
-  new Colour(Colour.RGBA, [183,106,47, 255]),
-  new Colour(Colour.RGBA, [157,91,40, 255]),
-  new Colour(Colour.RGBA, [79,79,79, 255]),
-  new Colour(Colour.RGBA, [96,96,96, 255]),
-  new Colour(Colour.RGBA, [112,112,112, 255]),
-  new Colour(Colour.RGBA, [96,96,96, 255]),
-  new Colour(Colour.RGBA, [45,45,180, 255]),
-  new Colour(Colour.RGBA, [55,55,220, 255]),
-  new Colour(Colour.RGBA, [64,64,255, 255]),
-  new Colour(Colour.RGBA, [55,55,220, 255]),
-  new Colour(Colour.RGBA, [73,58,35, 255]),
-  new Colour(Colour.RGBA, [89,71,43, 255]),
-  new Colour(Colour.RGBA, [104,83,50, 255]),
-  new Colour(Colour.RGBA, [89,71,43, 255])
+  new Colour(Colour.RGBA, [109, 153, 48, 255]),
+  new Colour(Colour.RGBA, [127, 178, 56, 255]),
+  new Colour(Colour.RGBA, [109, 153, 48, 255]),
+  new Colour(Colour.RGBA, [174, 164, 115, 255]),
+  new Colour(Colour.RGBA, [213, 201, 140, 255]),
+  new Colour(Colour.RGBA, [247, 233, 163, 255]),
+  new Colour(Colour.RGBA, [213, 201, 140, 255]),
+  new Colour(Colour.RGBA, [117, 117, 117, 255]),
+  new Colour(Colour.RGBA, [144, 144, 144, 255]),
+  new Colour(Colour.RGBA, [167, 167, 167, 255]),
+  new Colour(Colour.RGBA, [144, 144, 144, 255]),
+  new Colour(Colour.RGBA, [180, 0, 0, 255]),
+  new Colour(Colour.RGBA, [220, 0, 0, 255]),
+  new Colour(Colour.RGBA, [255, 0, 0, 255]),
+  new Colour(Colour.RGBA, [220, 0, 0, 255]),
+  new Colour(Colour.RGBA, [112, 112, 180, 255]),
+  new Colour(Colour.RGBA, [138, 138, 220, 255]),
+  new Colour(Colour.RGBA, [160, 160, 255, 255]),
+  new Colour(Colour.RGBA, [138, 138, 220, 255]),
+  new Colour(Colour.RGBA, [117, 117, 117, 255]),
+  new Colour(Colour.RGBA, [144, 144, 144, 255]),
+  new Colour(Colour.RGBA, [167, 167, 167, 255]),
+  new Colour(Colour.RGBA, [144, 144, 144, 255]),
+  new Colour(Colour.RGBA, [0, 87, 0, 255]),
+  new Colour(Colour.RGBA, [0, 106, 0, 255]),
+  new Colour(Colour.RGBA, [0, 124, 0, 255]),
+  new Colour(Colour.RGBA, [0, 106, 0, 255]),
+  new Colour(Colour.RGBA, [180, 180, 180, 255]),
+  new Colour(Colour.RGBA, [220, 220, 220, 255]),
+  new Colour(Colour.RGBA, [255, 255, 255, 255]),
+  new Colour(Colour.RGBA, [220, 220, 220, 255]),
+  new Colour(Colour.RGBA, [115, 118, 129, 255]),
+  new Colour(Colour.RGBA, [141, 144, 158, 255]),
+  new Colour(Colour.RGBA, [164, 168, 184, 255]),
+  new Colour(Colour.RGBA, [141, 144, 158, 255]),
+  new Colour(Colour.RGBA, [129, 74, 33, 255]),
+  new Colour(Colour.RGBA, [157, 91, 40, 255]),
+  new Colour(Colour.RGBA, [183, 106, 47, 255]),
+  new Colour(Colour.RGBA, [157, 91, 40, 255]),
+  new Colour(Colour.RGBA, [79, 79, 79, 255]),
+  new Colour(Colour.RGBA, [96, 96, 96, 255]),
+  new Colour(Colour.RGBA, [112, 112, 112, 255]),
+  new Colour(Colour.RGBA, [96, 96, 96, 255]),
+  new Colour(Colour.RGBA, [45, 45, 180, 255]),
+  new Colour(Colour.RGBA, [55, 55, 220, 255]),
+  new Colour(Colour.RGBA, [64, 64, 255, 255]),
+  new Colour(Colour.RGBA, [55, 55, 220, 255]),
+  new Colour(Colour.RGBA, [73, 58, 35, 255]),
+  new Colour(Colour.RGBA, [89, 71, 43, 255]),
+  new Colour(Colour.RGBA, [104, 83, 50, 255]),
+  new Colour(Colour.RGBA, [89, 71, 43, 255])
 ];
 
 var minecraftcolors_laba = [];
@@ -341,57 +344,57 @@ for (var i = 0; i < minecraftcolors.length; i++) {
 var minecraftcolors_new = [
   new Colour(Colour.RGBA, [255, 255, 255, 0]),
   new Colour(Colour.RGBA, [89, 125, 39, 255]),
-  new Colour(Colour.RGBA, [109,153,48, 255]),
-  new Colour(Colour.RGBA, [127,178,56, 255]),
-  new Colour(Colour.RGBA, [109,153,48, 255]),
-  new Colour(Colour.RGBA, [174,164,115, 255]),
-  new Colour(Colour.RGBA, [213,201,140, 255]),
-  new Colour(Colour.RGBA, [247,233,163, 255]),
-  new Colour(Colour.RGBA, [213,201,140, 255]),
-  new Colour(Colour.RGBA, [117,117,117, 255]),
-  new Colour(Colour.RGBA, [144,144,144, 255]),
-  new Colour(Colour.RGBA, [167,167,167, 255]),
-  new Colour(Colour.RGBA, [144,144,144, 255]),
-  new Colour(Colour.RGBA, [180,0,0, 255]),
-  new Colour(Colour.RGBA, [220,0,0, 255]),
-  new Colour(Colour.RGBA, [255,0,0, 255]),
-  new Colour(Colour.RGBA, [220,0,0, 255]),
-  new Colour(Colour.RGBA, [112,112,180, 255]),
-  new Colour(Colour.RGBA, [138,138,220, 255]),
-  new Colour(Colour.RGBA, [160,160,255, 255]),
-  new Colour(Colour.RGBA, [138,138,220, 255]),
-  new Colour(Colour.RGBA, [117,117,117, 255]),
-  new Colour(Colour.RGBA, [144,144,144, 255]),
-  new Colour(Colour.RGBA, [167,167,167, 255]),
-  new Colour(Colour.RGBA, [144,144,144, 255]),
-  new Colour(Colour.RGBA, [0,87,0, 255]),
-  new Colour(Colour.RGBA, [0,106,0, 255]),
-  new Colour(Colour.RGBA, [0,124,0, 255]),
-  new Colour(Colour.RGBA, [0,106,0, 255]),
-  new Colour(Colour.RGBA, [180,180,180, 255]),
-  new Colour(Colour.RGBA, [220,220,220, 255]),
-  new Colour(Colour.RGBA, [255,255,255, 255]),
-  new Colour(Colour.RGBA, [220,220,220, 255]),
-  new Colour(Colour.RGBA, [115,118,129, 255]),
-  new Colour(Colour.RGBA, [141,144,158, 255]),
-  new Colour(Colour.RGBA, [164,168,184, 255]),
-  new Colour(Colour.RGBA, [141,144,158, 255]),
-  new Colour(Colour.RGBA, [129,74,33, 255]),
-  new Colour(Colour.RGBA, [157,91,40, 255]),
-  new Colour(Colour.RGBA, [183,106,47, 255]),
-  new Colour(Colour.RGBA, [157,91,40, 255]),
-  new Colour(Colour.RGBA, [79,79,79, 255]),
-  new Colour(Colour.RGBA, [96,96,96, 255]),
-  new Colour(Colour.RGBA, [112,112,112, 255]),
-  new Colour(Colour.RGBA, [96,96,96, 255]),
-  new Colour(Colour.RGBA, [45,45,180, 255]),
-  new Colour(Colour.RGBA, [55,55,220, 255]),
-  new Colour(Colour.RGBA, [64,64,255, 255]),
-  new Colour(Colour.RGBA, [55,55,220, 255]),
-  new Colour(Colour.RGBA, [73,58,35, 255]),
-  new Colour(Colour.RGBA, [89,71,43, 255]),
-  new Colour(Colour.RGBA, [104,83,50, 255]),
-  new Colour(Colour.RGBA, [89,71,43, 255]),
+  new Colour(Colour.RGBA, [109, 153, 48, 255]),
+  new Colour(Colour.RGBA, [127, 178, 56, 255]),
+  new Colour(Colour.RGBA, [109, 153, 48, 255]),
+  new Colour(Colour.RGBA, [174, 164, 115, 255]),
+  new Colour(Colour.RGBA, [213, 201, 140, 255]),
+  new Colour(Colour.RGBA, [247, 233, 163, 255]),
+  new Colour(Colour.RGBA, [213, 201, 140, 255]),
+  new Colour(Colour.RGBA, [117, 117, 117, 255]),
+  new Colour(Colour.RGBA, [144, 144, 144, 255]),
+  new Colour(Colour.RGBA, [167, 167, 167, 255]),
+  new Colour(Colour.RGBA, [144, 144, 144, 255]),
+  new Colour(Colour.RGBA, [180, 0, 0, 255]),
+  new Colour(Colour.RGBA, [220, 0, 0, 255]),
+  new Colour(Colour.RGBA, [255, 0, 0, 255]),
+  new Colour(Colour.RGBA, [220, 0, 0, 255]),
+  new Colour(Colour.RGBA, [112, 112, 180, 255]),
+  new Colour(Colour.RGBA, [138, 138, 220, 255]),
+  new Colour(Colour.RGBA, [160, 160, 255, 255]),
+  new Colour(Colour.RGBA, [138, 138, 220, 255]),
+  new Colour(Colour.RGBA, [117, 117, 117, 255]),
+  new Colour(Colour.RGBA, [144, 144, 144, 255]),
+  new Colour(Colour.RGBA, [167, 167, 167, 255]),
+  new Colour(Colour.RGBA, [144, 144, 144, 255]),
+  new Colour(Colour.RGBA, [0, 87, 0, 255]),
+  new Colour(Colour.RGBA, [0, 106, 0, 255]),
+  new Colour(Colour.RGBA, [0, 124, 0, 255]),
+  new Colour(Colour.RGBA, [0, 106, 0, 255]),
+  new Colour(Colour.RGBA, [180, 180, 180, 255]),
+  new Colour(Colour.RGBA, [220, 220, 220, 255]),
+  new Colour(Colour.RGBA, [255, 255, 255, 255]),
+  new Colour(Colour.RGBA, [220, 220, 220, 255]),
+  new Colour(Colour.RGBA, [115, 118, 129, 255]),
+  new Colour(Colour.RGBA, [141, 144, 158, 255]),
+  new Colour(Colour.RGBA, [164, 168, 184, 255]),
+  new Colour(Colour.RGBA, [141, 144, 158, 255]),
+  new Colour(Colour.RGBA, [129, 74, 33, 255]),
+  new Colour(Colour.RGBA, [157, 91, 40, 255]),
+  new Colour(Colour.RGBA, [183, 106, 47, 255]),
+  new Colour(Colour.RGBA, [157, 91, 40, 255]),
+  new Colour(Colour.RGBA, [79, 79, 79, 255]),
+  new Colour(Colour.RGBA, [96, 96, 96, 255]),
+  new Colour(Colour.RGBA, [112, 112, 112, 255]),
+  new Colour(Colour.RGBA, [96, 96, 96, 255]),
+  new Colour(Colour.RGBA, [45, 45, 180, 255]),
+  new Colour(Colour.RGBA, [55, 55, 220, 255]),
+  new Colour(Colour.RGBA, [64, 64, 255, 255]),
+  new Colour(Colour.RGBA, [55, 55, 220, 255]),
+  new Colour(Colour.RGBA, [73, 58, 35, 255]),
+  new Colour(Colour.RGBA, [89, 71, 43, 255]),
+  new Colour(Colour.RGBA, [104, 83, 50, 255]),
+  new Colour(Colour.RGBA, [89, 71, 43, 255]),
   // NEW COLOURS FOR snapshot 13w42a
   new Colour(Colour.RGBA, [178, 178, 178, 255]),
   new Colour(Colour.RGBA, [220, 220, 220, 255]),
@@ -496,12 +499,11 @@ for (var i = 0; i < minecraftcolors_new.length; i++) {
   minecraftcolors_new_xyza.push(minecraftcolors_new[i].convertTo(Colour.XYZA));
 }
 
-function makerandomid()
-{
+function makerandomid() {
   var text = "";
   var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-  for( var i=0; i < 10; i++ )
+  for (var i = 0; i < 10; i++)
     text += possible.charAt(Math.floor(Math.random() * possible.length));
 
   return text;
@@ -533,5 +535,3 @@ $(document).ready(function() {
   $('.step-4').addClass('hidden');
   $('.step-5').addClass('hidden');
 });
-
-
