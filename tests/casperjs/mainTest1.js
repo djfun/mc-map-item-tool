@@ -9,7 +9,7 @@ String.prototype.hashCode = function() {
   return hash;
 };
 
-casper.test.begin('mainjs - 1 map', 7, {
+casper.test.begin('mainjs - 1 map', 11, {
   setUp: function(test) {
     var fs = require('fs');
     this.workingdir = fs.workingDirectory;
@@ -71,7 +71,7 @@ casper.test.begin('mainjs - 1 map', 7, {
               url: url,
               data: data
             });
-            callback('some data');
+            callback('theFileName');
           };
           $.post._oldfunction = old_function;
           return old_function;
@@ -84,6 +84,7 @@ casper.test.begin('mainjs - 1 map', 7, {
     casper.then(function step5() {
       this.waitUntilVisible('.step-5', function() {
         // this.echo(this.getHTML('#ajaxreply'));
+        test.assertEquals(this.getHTML('#ajaxreply'), '<a href="tmp/theFileName.dat?mapnumber=0">Download</a> (map_0.dat)', 'correct download link in ajax reply');
       });
     });
 
@@ -91,6 +92,9 @@ casper.test.begin('mainjs - 1 map', 7, {
       if (o.type == 'ajax.post') {
         // this.echo("ajax.post event");
         test.assertEquals(o.data.map_item.hashCode(), 1654242093, 'correct map-item array sent to server');
+        test.assertEquals(o.data.x_center, '0', 'correct default value for x_center');
+        test.assertEquals(o.data.z_center, '0', 'correct default value for z_center');
+        test.assertEquals(o.data.dimension, '0', 'correct default value for dimension');
       }
     });
 
