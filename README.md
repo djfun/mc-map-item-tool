@@ -1,4 +1,4 @@
-mc-map-item-tool
+mc-map-item-tool [![Build Status](https://travis-ci.org/djfun/mc-map-item-tool.png?branch=master)](https://travis-ci.org/djfun/mc-map-item-tool)
 ================
 
 [nodejs](http://nodejs.org) webtool for converting images to Minecraft map items.
@@ -12,6 +12,6 @@ mc-map-item-tool is licensed under the MIT license.
 
 Tests
 -----
-A first UI test can be run with grunt using
+A few first UI tests can be run with grunt using
 
   npm test

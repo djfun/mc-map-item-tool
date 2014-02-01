@@ -8,10 +8,11 @@ module.exports = function(grunt) {
       options: {
         async: {
           parallel: false
-        }/*,
+        }
+        /*,
         casperjsOptions: ['--log-level=debug', '--verbose', '--web-security=no']*/
       },
-      files: ['tests/casperjs/*.js']
+      files: ['tests/yadda/main_test.js']
     }
   });
 

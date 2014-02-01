@@ -22,6 +22,8 @@
   },
   "devDependencies": {
     "grunt": "~0.4.2",
-    "grunt-casperjs": "~1.4.0"
+    "grunt-casperjs": "~1.4.0",
+    "yadda": "~0.9.8",
+    "async": "~0.2.10"
   }
 }

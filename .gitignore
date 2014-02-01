@@ -1,2 +1,4 @@
 node_modules/grunt
 node_modules/grunt-casperjs
+node_modules/yadda
+node_modules/async
