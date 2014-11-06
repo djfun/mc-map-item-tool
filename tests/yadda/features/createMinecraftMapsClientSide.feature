@@ -6,7 +6,7 @@ Feature: Create Minecraft map items client side
   Scenario: Creating a single map with the old colors
 
     Given I am on the client side version of the index page
-    And the default settings are used
+    And the old colors are used
     When I upload "2013-10-18_00.28.30.png"
     Then I am able to split the image into 6 horizontal and 3 vertical parts
 
@@ -25,7 +25,7 @@ Feature: Create Minecraft map items client side
   Scenario: Creating a single map with the new colors
 
     Given I am on the client side version of the index page
-    And the the new colors are used
+    And the new colors are used
     When I upload "2013-10-18_00.28.30.png"
     And I select "1" horizontal and "1" vertical part
     Then the canvas should have the hash code "-1359257648" in step 3

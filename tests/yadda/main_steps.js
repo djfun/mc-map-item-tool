@@ -33,7 +33,12 @@ module.exports.init = function() {
         phantom.clearCookies();
       });
     })
-    .given("the the new colors are used", function() {
+    .given("the old colors are used", function() {
+      casper.evaluate(function() {
+        Cookies.set('newColors', 'no');
+      });
+    })
+    .given("the new colors are used", function() {
       casper.evaluate(function() {
         Cookies.set('newColors', 'yes');
       });

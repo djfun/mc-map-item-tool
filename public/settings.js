@@ -5,7 +5,7 @@ $(document).ready(function() {
   var xcenter = Cookies.get('xcenter') || '0';
   var zcenter = Cookies.get('zcenter') || '0';
   var dim = Cookies.get('dimension') || '0';
-  var newColors = Cookies.get('newColors') || 'no';
+  var newColors = Cookies.get('newColors') || 'yes';
 
   $('#colorSpace').val(colourSpace);
   $('#x_center').val(xcenter);
