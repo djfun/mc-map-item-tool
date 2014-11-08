@@ -227,24 +227,17 @@ function createfile(ev) {
           }, function(data) {
             responses[y + map_parts_vertical * x] = data;
             responses_count++;
+            updateResponse('zip_file_part', {done_count: responses_count, map_count: map_parts_horizontal * map_parts_vertical});
             if (responses_count === map_parts_horizontal * map_parts_vertical) {
-              var response_text = "";
               if (responses_count == 1) {
-                response_text = '<a href="tmp/' + responses[0] + '.dat?mapnumber=' + mapnumber + '">Download</a>' + " (map_" + mapnumber + ".dat)";
-                $('#ajaxreply').html(response_text);
-                $('.step-4').addClass('hidden');
-                $('.step-5').removeClass('hidden');
+                updateResponse('single_file_finished', {filename: responses[0], mapnumber: mapnumber});
               } else {
                 $.post('createzip', {
                   mapfiles: JSON.stringify(responses),
                   zipname: randomid,
                   mapnumber: mapnumber
                 }, function(data) {
-                  console.log(data);
-                  response_text = '<a href="tmp/' + data + '.zip">Download</a>' + " (Zip archive with map files)";
-                  $('#ajaxreply').html(response_text);
-                  $('.step-4').addClass('hidden');
-                  $('.step-5').removeClass('hidden');
+                  updateResponse('zip_file_finished', {filename: data});
                 });
               }
             }
@@ -252,6 +245,29 @@ function createfile(ev) {
         }());
       }
     }
+  }
+}
+
+function updateResponse(step, data) {
+  var response_text;
+
+  if (step == 'single_file_finished') {
+    response_text = '<a href="tmp/' + data['filename'] + '.dat?mapnumber=' +
+        data['mapnumber'] + '">Download</a>' + " (map_" + data['mapnumber'] + ".dat)";
+    $('#ajaxreply').html(response_text);
+    $('.step-4').addClass('hidden');
+    $('.step-5').removeClass('hidden');
+  } else if (step == 'zip_file_finished') {
+    console.log(data);
+    response_text = '<a href="tmp/' + data['filename'] + '.zip">Download</a>' + " (Zip archive with map files)";
+    $('#ajaxreply').html(response_text);
+    $('.step-4').addClass('hidden');
+    $('.step-5').removeClass('hidden');
+  } else if (step == 'zip_file_part') {
+    response_text = "Creating maps: " + data['done_count'] + " of " + data['map_count'] + " done.";
+    $('#ajaxreply').html(response_text);
+    $('.step-4').addClass('hidden');
+    $('.step-5').removeClass('hidden');
   }
 }
 
