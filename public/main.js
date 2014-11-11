@@ -139,6 +139,9 @@ function reducecolors(ev) {
     colourSpace: Cookies.get('colourSpace') || 'laba'
   });
 
+  var time_start = new Date();
+  var duration = 0;
+
   worker.onmessage = function(oEvent) {
     if (oEvent.data.step == 'finished') {
       ctx.putImageData(oEvent.data.pixelData, 0, 0);
@@ -148,6 +151,8 @@ function reducecolors(ev) {
       $('.step-3').addClass('hidden');
       $('#reducecolors').removeClass('hidden');
       $('.step-4').removeClass('hidden');
+      duration = Math.abs(time_start - new Date()) / 1000;
+      $('#reducecolors_time').html('Reducing colors took ' + duration + ' seconds.');
     } else if (oEvent.data.step == 'percentage') {
       $('#reducecolors_progress').html(oEvent.data.percentage + '% complete.');
     }
@@ -156,6 +161,10 @@ function reducecolors(ev) {
 }
 
 function createfile(ev) {
+  $('#reducecolors_time').addClass('hidden');
+
+  var time_start = new Date();
+
   var xcenter = Cookies.get('xcenter') || '0';
   var zcenter = Cookies.get('zcenter') || '0';
   var dim = Cookies.get('dimension') || '0';
@@ -199,14 +208,14 @@ function createfile(ev) {
             updateResponse('zip_file_part', {done_count: responses_count, map_count: map_parts_horizontal * map_parts_vertical});
             if (responses_count === map_parts_horizontal * map_parts_vertical) {
               if (responses_count == 1) {
-                updateResponse('single_file_finished', {filename: responses[0], mapnumber: mapnumber});
+                updateResponse('single_file_finished', {filename: responses[0], mapnumber: mapnumber, time_start: time_start});
               } else {
                 $.post('createzip', {
                   mapfiles: JSON.stringify(responses),
                   zipname: randomid,
                   mapnumber: mapnumber
                 }, function(data) {
-                  updateResponse('zip_file_finished', {filename: data});
+                  updateResponse('zip_file_finished', {filename: data, time_start: time_start});
                 });
               }
             }
@@ -224,12 +233,16 @@ function updateResponse(step, data) {
     response_text = '<a href="tmp/' + data['filename'] + '.dat?mapnumber=' +
         data['mapnumber'] + '">Download</a>' + " (map_" + data['mapnumber'] + ".dat)";
     $('#ajaxreply').html(response_text);
+    duration = Math.abs(data.time_start - new Date()) / 1000;
+    $('#ajaxreply_time').html('Creating map file took ' + duration + ' seconds.');
     $('.step-4').addClass('hidden');
     $('.step-5').removeClass('hidden');
   } else if (step == 'zip_file_finished') {
     console.log(data);
     response_text = '<a href="tmp/' + data['filename'] + '.zip">Download</a>' + " (Zip archive with map files)";
     $('#ajaxreply').html(response_text);
+    duration = Math.abs(data.time_start - new Date()) / 1000;
+    $('#ajaxreply_time').html('Creating map files took ' + duration + ' seconds.');
     $('.step-4').addClass('hidden');
     $('.step-5').removeClass('hidden');
   } else if (step == 'zip_file_part') {
