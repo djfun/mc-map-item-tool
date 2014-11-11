@@ -47,7 +47,7 @@ var tmp_files = {
   removeOldFiles: function() {
     var time = (new Date()).getTime();
     for (var hash in this.files) {
-      if (this.files[hash] < time - 300000) {
+      if (this.files[hash] < time - (30 * 60 * 1000)) {
         delete_tmp_files(hash);
         delete this.files[hash];
       }
