@@ -219,6 +219,8 @@ function createfile(ev) {
                 });
               }
             }
+          }).error(function() {
+            updateResponse('error');
           });
         }());
       }
@@ -249,6 +251,12 @@ function updateResponse(step, data) {
     response_text = "Creating maps: " + data['done_count'] + " of " + data['map_count'] + " done.";
     $('#ajaxreply').html(response_text);
     $('.step-4').addClass('hidden');
+    $('.step-5').removeClass('hidden');
+  } else if (step == 'error') {
+    response_text = "The server returned an error. If you think, this is a malfuntion, please report it (via github, twitter, ..).";
+    $('#ajaxreply').html(response_text);
+    $('.step-4').addClass('hidden');
+    $('#instruction').addClass('hidden');
     $('.step-5').removeClass('hidden');
   }
 }

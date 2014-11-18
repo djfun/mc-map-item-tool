@@ -1,4 +1,6 @@
-node_modules/grunt
-node_modules/grunt-casperjs
+node_modules/casperjs
+node_modules/phantomjs
 node_modules/yadda
 node_modules/async
+node_modules/node-nbt
+node_modules/.bin

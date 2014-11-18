@@ -17,7 +17,6 @@ var crypto = require('crypto');
 
 var archiver = require('archiver');
 
-
 // on start delete all files in ./tmp
 fs.readdir('./public/tmp', function(err, files) {
   if (err) {
@@ -180,33 +179,42 @@ function handler (req, res) {
             }
           ]
         };
-        var b = NbtWriter.writeTag(map_file);
-        var shasum = crypto.createHash('sha1');
-        shasum.update(b);
-        var filename = randomid + shasum.digest('hex');
-        tmp_files.addFile(filename + '.dat');
-        zlib.gzip(b, function(err, data) {
-          if (err) {
-            res.writeHead(500);
-            res.end("Internal server error");
-            console.log(myDate.getCurrent() + ' Error:');
-            console.log(err);
-          } else {
-            fs.writeFile('public/tmp/' + filename + '.dat', data, function(err) {
-              if (!err) {
-                console.log(myDate.getCurrent() + ' Map file written to disk: ' + filename + '.dat');
-                res.setHeader('Content-Type', 'text/html');
-                res.writeHead(200);
-                res.end(filename);
-                // res.end('<a href="tmp/' + filename + '.dat">Download</a>');
-              } else {
-                res.writeHead(500);
-                res.end("Internal server error");
-                console.log(err);
-              }
-            });
-          }
-        });
+        var b;
+        try {
+          b = NbtWriter.writeTag(map_file);
+          var shasum = crypto.createHash('sha1');
+          shasum.update(b);
+          var filename = randomid + shasum.digest('hex');
+          tmp_files.addFile(filename + '.dat');
+          zlib.gzip(b, function(err, data) {
+            if (err) {
+              res.writeHead(500);
+              res.end("Internal server error");
+              console.log(myDate.getCurrent() + ' Error:');
+              console.log(err);
+            } else {
+              fs.writeFile('public/tmp/' + filename + '.dat', data, function(err) {
+                if (!err) {
+                  console.log(myDate.getCurrent() + ' Map file written to disk: ' + filename + '.dat');
+                  res.setHeader('Content-Type', 'text/html');
+                  res.writeHead(200);
+                  res.end(filename);
+                  // res.end('<a href="tmp/' + filename + '.dat">Download</a>');
+                } else {
+                  res.writeHead(500);
+                  res.end("Internal server error");
+                  console.log(err);
+                }
+              });
+            }
+          });
+        } catch (e) {
+          // error with writing the file
+          res.writeHead(500);
+          res.end("Internal server error");
+          console.log(myDate.getCurrent() + ' Error:');
+          console.log(e);
+        }
       } else {
         console.log(myDate.getCurrent() + ' 400 Bad request');
         res.writeHead(400);
@@ -281,3 +289,5 @@ myDate.getCurrent = function(timestamp) {
 
   return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
 };
+
+console.log(myDate.getCurrent() + ' Started mc-map-item-tool server');

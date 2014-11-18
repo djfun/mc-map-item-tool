@@ -1,10 +1,10 @@
 {
   "name": "minecraft-map-item-tool",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "web tool for converting images to minecraft maps",
   "main": "server.js",
   "scripts": {
-    "test": "grunt test --verbose",
+    "test": "casperjs test tests/yadda/main_test.js",
     "start": "node server.js"
   },
   "repository": {
@@ -21,9 +21,12 @@
     "node": ">= 0.10.0"
   },
   "devDependencies": {
-    "grunt": "~0.4.2",
-    "grunt-casperjs": "~1.4.0",
-    "yadda": "~0.9.8",
-    "async": "~0.2.10"
+    "async": "^0.2.10",
+    "casperjs": "^1.1.0-beta3",
+    "phantomjs": "^1.9.12",
+    "yadda": "^0.11.2"
+  },
+  "dependencies": {
+    "node-nbt": "^1.0.0"
   }
 }
