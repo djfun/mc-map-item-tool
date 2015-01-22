@@ -136,7 +136,8 @@ function reducecolors(ev) {
 
   worker.postMessage({pixelData: pixelData,
     new_colors: Cookies.get('newColors') || 'yes',
-    colourSpace: Cookies.get('colourSpace') || 'laba'
+    colourSpace: Cookies.get('colourSpace') || 'laba',
+    dithering: Cookies.get('dithering') || 'no'
   });
 
   var time_start = new Date();
@@ -155,6 +156,8 @@ function reducecolors(ev) {
       $('#reducecolors_time').html('Reducing colors took ' + duration + ' seconds.');
     } else if (oEvent.data.step == 'percentage') {
       $('#reducecolors_progress').html(oEvent.data.percentage + '% complete.');
+    } else if (oEvent.data.step == 'debug') {
+      console.log(oEvent.data.message);
     }
   };
 

@@ -6,12 +6,14 @@ $(document).ready(function() {
   var zcenter = Cookies.get('zcenter') || '0';
   var dim = Cookies.get('dimension') || '0';
   var newColors = Cookies.get('newColors') || 'yes';
+  var dithering = Cookies.get('dithering') || 'no';
 
   $('#colorSpace').val(colourSpace);
   $('#x_center').val(xcenter);
   $('#z_center').val(zcenter);
   $('#dimension').val(dim);
   $('#newColors').val(newColors);
+  $('#dithering').val(dithering);
 });
 
 function savesettings(event) {
@@ -20,9 +22,11 @@ function savesettings(event) {
   var zcenter = $('#z_center').val();
   var dim = $('#dimension').val();
   var newColors = $('#newColors').val();
+  var dithering = $('#dithering').val();
   Cookies.set('colourSpace', colourSpace);
   Cookies.set('xcenter', xcenter);
   Cookies.set('zcenter', zcenter);
   Cookies.set('dimension', dim);
   Cookies.set('newColors', newColors);
+  Cookies.set('dithering', dithering);
 }

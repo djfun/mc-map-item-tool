@@ -2,11 +2,13 @@ importScripts("Colour.js");
 
 var all_maps_data;
 var colourSpace;
+var dithering;
 
 onmessage = function (oEvent) {
   load_colors(oEvent.data.new_colors);
   var pixelData = oEvent.data.pixelData;
   colourSpace = oEvent.data.colourSpace;
+  dithering = oEvent.data.dithering;
 
   all_maps_data = [];
   var index;
@@ -41,6 +43,11 @@ function reduce_colors_map(a, b, c, d, pixelData) {
     pixelData.data[d]
   ]);
 
+  var old_a = pixelData.data[a];
+  var old_b = pixelData.data[b];
+  var old_c = pixelData.data[c];
+  var old_d = pixelData.data[d];
+
   if (colourSpace == 'laba') {
     color = color.convertTo(Colour.LABA);
     compareColors = minecraftcolors_laba;
@@ -74,6 +81,56 @@ function reduce_colors_map(a, b, c, d, pixelData) {
   pixelData.data[d] = minecraftcolors[closestColorIndex].values[3];
 
   all_maps_data.push(closestColorIndex + 3);
+
+  if (dithering == 'floydsteinberg') {
+    floyd_steinberg(a, b, c, d, pixelData, old_a, old_b, old_c, old_d);
+  }
+}
+
+
+function floyd_steinberg(a, b, c, d, pixelData, old_a, old_b, old_c, old_d) {
+  var quant_error_a = old_a - pixelData.data[a];
+  var quant_error_b = old_b - pixelData.data[b];
+  var quant_error_c = old_c - pixelData.data[c];
+  var quant_error_d = old_d - pixelData.data[d];
+  quant_error_a *= 0.4;
+  quant_error_b *= 0.4;
+  quant_error_c *= 0.4;
+  quant_error_d *= 0.4;
+
+  var width = pixelData.width * 4;
+
+  // [x+1][y  ]
+  if (d + 4 <= pixelData.data.length && d % width < width - 1) {
+    pixelData.data[a + 4] = pixelData.data[a + 4] + quant_error_a * 7 / 16;
+    pixelData.data[b + 4] = pixelData.data[b + 4] + quant_error_b * 7 / 16;
+    pixelData.data[c + 4] = pixelData.data[c + 4] + quant_error_c * 7 / 16;
+    pixelData.data[d + 4] = pixelData.data[d + 4] + quant_error_d * 7 / 16;
+  }
+
+  // [x-1][y+1]
+  if (d + width <= pixelData.data.length && d % width > 0) {
+    pixelData.data[a - 4 + width] = pixelData.data[a - 4 + width] + quant_error_a * 3 / 16;
+    pixelData.data[b - 4 + width] = pixelData.data[b - 4 + width] + quant_error_b * 3 / 16;
+    pixelData.data[c - 4 + width] = pixelData.data[c - 4 + width] + quant_error_c * 3 / 16;
+    pixelData.data[d - 4 + width] = pixelData.data[d - 4 + width] + quant_error_d * 3 / 16;
+  }
+
+  // [x  ][y+1]
+  if (d + width <= pixelData.data.length) {
+    pixelData.data[a + width] = pixelData.data[a + width] + quant_error_a * 5 / 16;
+    pixelData.data[b + width] = pixelData.data[b + width] + quant_error_b * 5 / 16;
+    pixelData.data[c + width] = pixelData.data[c + width] + quant_error_c * 5 / 16;
+    pixelData.data[d + width] = pixelData.data[d + width] + quant_error_d * 5 / 16;
+  }
+
+  // [x+1][y+1]
+  if (d + width <= pixelData.data.length && d % width < width - 1) {
+    pixelData.data[a + 4 + width] = pixelData.data[a + 4 + width] + quant_error_a * 1 / 16;
+    pixelData.data[b + 4 + width] = pixelData.data[b + 4 + width] + quant_error_b * 1 / 16;
+    pixelData.data[c + 4 + width] = pixelData.data[c + 4 + width] + quant_error_c * 1 / 16;
+    pixelData.data[d + 4 + width] = pixelData.data[d + 4 + width] + quant_error_d * 1 / 16;
+  }
 }
 
 var minecraftcolors, minecraftcolors_laba, minecraftcolors_hsva, minecraftcolors_xyza;
