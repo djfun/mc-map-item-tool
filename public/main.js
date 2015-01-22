@@ -5,12 +5,18 @@ var ctx_full = document.getElementById('canvas_full').getContext('2d'),
   img,
   original_img = document.getElementById('original_img'),
   url = window.URL || window.webkitURL,
-  src;
+  src,
+  interpolation;
 
 function draw(ev) {
   var f = document.getElementById("uploadimage").files[0];
   img = new Image();
   src = url.createObjectURL(f);
+
+  interpolation = Cookies.get('interpolation') || 'standard';
+  if (interpolation == 'nearest_neighbor') {
+    $('#original_img').addClass('pixelated');
+  }
 
   img.src = src;
   original_img.src = src;
@@ -71,6 +77,13 @@ function selectnumber(ev) {
 
   canvas_full.style.width = canvas_full.width * 2;
   canvas_full.style.height = canvas_full.height * 2;
+
+  if (interpolation == 'nearest_neighbor') {
+    ctx_full.mozImageSmoothingEnabled = false;
+    ctx_full.webkitImageSmoothingEnabled = false;
+    ctx_full.msImageSmoothingEnabled = false;
+    ctx_full.imageSmoothingEnabled = false;
+  }
 
   ctx_full.drawImage(canvasCopy, 0, 0,
     canvasCopy.width, canvasCopy.height,
