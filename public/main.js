@@ -6,7 +6,9 @@ var ctx_full = document.getElementById('canvas_full').getContext('2d'),
   original_img = document.getElementById('original_img'),
   url = window.URL || window.webkitURL,
   src,
-  interpolation;
+  interpolation,
+  selected_ratio,
+  settings_string;
 
 function draw(ev) {
   var f = document.getElementById("uploadimage").files[0];
@@ -17,6 +19,43 @@ function draw(ev) {
   if (interpolation == 'nearest_neighbor') {
     $('#original_img').addClass('pixelated');
   }
+
+  // list all settings from Cookies in span#list_settings
+
+  var colorSchemeToText = {
+    'no': 'Old colors',
+    'yes': 'Version 1.7.2 (2013)',
+    '181': 'Version 1.8.1 (2014)'
+  };
+  var dimensionToText = {
+    '0': 'Overworld',
+    '1': 'Nether',
+    '2': 'End'
+  };
+  var ditheringToText = {
+    'no': 'No dithering',
+    'floydsteinberg': 'Floyd-Steinberg',
+  };
+  var interpolationToText = {
+    'standard': 'Standard',
+    'nearest_neighbor': 'Nearest Neighbor'
+  };
+  var sett_colorSpace = Cookies.get('colourSpace') || 'laba';
+  var sett_colorScheme = colorSchemeToText[Cookies.get('newColors') || 'yes'];
+  var sett_dithering = ditheringToText[Cookies.get('dithering') || 'no'];
+  var sett_interpolation = interpolationToText[Cookies.get('interpolation') || 'standard'];
+  var sett_xCenter = Cookies.get('xcenter') || '0';
+  var sett_zCenter = Cookies.get('zcenter') || '0';
+  var sett_dimension = dimensionToText[Cookies.get('dimension') || '0'];
+
+  settings_string = '<tr><td>Color space</td><td>' + sett_colorSpace + '</td></tr>';
+  settings_string += '<tr><td>Color scheme</td><td>' + sett_colorScheme + '</td></tr>';
+  settings_string += '<tr><td>Dithering</td><td>' + sett_dithering + '</td></tr>';
+  settings_string += '<tr><td>Interpolation</td><td>' + sett_interpolation + '</td></tr>';
+  settings_string += '<tr><td>X Center</td><td>' + sett_xCenter + '</td></tr>';
+  settings_string += '<tr><td>Z Center</td><td>' + sett_zCenter + '</td></tr>';
+  settings_string += '<tr><td>Dimension</td><td>' + sett_dimension + '</td></tr>';
+  $('#list_settings').html('<table style="margin-left: auto; margin-right: auto; width: 300px">' + settings_string + '</table>');
 
   img.src = src;
   original_img.src = src;
@@ -89,6 +128,22 @@ function selectnumber(ev) {
     canvasCopy.width, canvasCopy.height,
     spaceW, spaceH, img.width * ratio, img.height * ratio);
 
+  var ctx_full_scaled = document.getElementById('canvas_full_scaled').getContext('2d');
+  selected_ratio = map_parts_horizontal / map_parts_vertical;
+  if (map_parts_horizontal >= map_parts_vertical) {
+    ctx_full_scaled.drawImage(canvas_full, 0, 0, 256, 256 * (1/selected_ratio));
+  } else {
+    ctx_full_scaled.drawImage(canvas_full, 0, 0, 256 * selected_ratio, 256);
+  }
+
+
+  // draw scaled version of ctx_full onto canvas#canvas_full_scaled
+  // add part selection to span#list_settings
+
+  settings_string += '<tr><td>Map parts horizontal</td><td>' + map_parts_horizontal + '</td></tr>';
+  settings_string += '<tr><td>Map parts vertical</td><td>' + map_parts_vertical + '</td></tr>';
+  $('#list_settings').html('<table style="margin-left: auto; margin-right: auto; width: 300px">' + settings_string + '</table>');
+
   drawCanvas(0, 0);
   map_x = 0;
   map_y = 0;
@@ -160,6 +215,14 @@ function reducecolors(ev) {
     if (oEvent.data.step == 'finished') {
       ctx.putImageData(oEvent.data.pixelData, 0, 0);
       all_maps_data = oEvent.data.all_maps_data;
+
+      // redraw scaled and now color reduced version of ctx_full onto canvas#canvas_full_scaled
+      var ctx_full_scaled = document.getElementById('canvas_full_scaled').getContext('2d');
+      if (map_parts_horizontal >= map_parts_vertical) {
+        ctx_full_scaled.drawImage(canvas_full, 0, 0, 256, 256 * (1/selected_ratio));
+      } else {
+        ctx_full_scaled.drawImage(canvas_full, 0, 0, 256 * selected_ratio, 256);
+      }
 
       drawCanvas(map_x, map_y);
       $('.step-3').addClass('hidden');

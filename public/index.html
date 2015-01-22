@@ -30,14 +30,28 @@
     <form>
       <fieldset>
         <div class='step-0-image'>
-          <p>Original image:</p>
-          <img id="original_img" width="256" height="256" />
+          <div style="float:left; width: 50%;">
+            <p>Original image:</p>
+            <img id="original_img" width="256" height="256" />
+          </div>
+          <div style="float:right; width: 50%;">
+            <p>Settings:</p>
+            <span id="list_settings"></span>
+          </div>
+          <div class="spacer" style="clear: both;"></div>
         </div>
         <div class='step-0-canvas'>
           <a name="canvas"></a>
-          <p>Map item:</p>
-          <canvas id="canvas" width="128" height="128"></canvas>
-          <p><a href="#canvas" class="prev-map" id="prevmap">Previous</a>&nbsp;&nbsp;<a href="#canvas" class="next-map" id="nextmap">Next</a></p>
+          <div style="float:left; width: 50%;">
+            <p>Map item:</p>
+            <canvas id="canvas" width="256" height="256"></canvas>
+            <p><a href="#canvas" class="prev-map" id="prevmap">Previous</a>&nbsp;&nbsp;<a href="#canvas" class="next-map" id="nextmap">Next</a></p>
+          </div>
+          <div style="float:right; width: 50%;">
+            <p>All map parts together:</p>
+            <canvas id="canvas_full_scaled" width="256" height="256"></canvas>
+          </div>
+          <div class="spacer" style="clear: both;"></div>
         </div>
         <div class="step-1">
           <h2>Step 1 - Select an image file</h2>
