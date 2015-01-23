@@ -17,6 +17,8 @@ var crypto = require('crypto');
 
 var archiver = require('archiver');
 
+var poolModule = require('generic-pool');
+
 // on start delete all files in ./tmp
 fs.readdir('./public/tmp', function(err, files) {
   if (err) {
@@ -193,17 +195,27 @@ function handler (req, res) {
               console.log(myDate.getCurrent() + ' Error:');
               console.log(err);
             } else {
-              fs.writeFile('public/tmp/' + filename + '.dat', data, function(err) {
-                if (!err) {
-                  console.log(myDate.getCurrent() + ' Map file written to disk: ' + filename + '.dat');
-                  res.setHeader('Content-Type', 'text/html');
-                  res.writeHead(200);
-                  res.end(filename);
-                  // res.end('<a href="tmp/' + filename + '.dat">Download</a>');
-                } else {
+              pool.acquire(function(err, client) {
+                if (err) {
                   res.writeHead(500);
                   res.end("Internal server error");
-                  console.log(err);
+                  console.log(myDate.getCurrent() + ' Error:');
+                  console.log(e);
+                } else {
+                  fs.writeFile('public/tmp/' + filename + '.dat', data, function(err) {
+                    if (!err) {
+                      console.log(myDate.getCurrent() + ' Map file written to disk: ' + filename + '.dat');
+                      res.setHeader('Content-Type', 'text/html');
+                      res.writeHead(200);
+                      res.end(filename);
+                      // res.end('<a href="tmp/' + filename + '.dat">Download</a>');
+                    } else {
+                      res.writeHead(500);
+                      res.end("Internal server error");
+                      console.log(err);
+                    }
+                    pool.release(client);
+                  });
                 }
               });
             }
@@ -246,7 +258,7 @@ function handler (req, res) {
             throw new NotInTmpFilesException(mapfiles[j]);
           }
           filenumber = mapnumber + j;
-          archive.append(fs.createReadStream('public/tmp/' + mapfiles[j] + '.dat'), { name: 'map_' + filenumber + '.dat' });
+          addMapToZip(mapfiles[j], filenumber, archive);
         }
         archive.finalize(function(err, bytes) {
           if (err) {
@@ -265,6 +277,30 @@ function handler (req, res) {
     }
   });
 }
+
+function addMapToZip(filename, filenumber, archive) {
+  pool.acquire(function(err, client) {
+    var readable = fs.createReadStream('public/tmp/' + filename + '.dat');
+    readable.on('end', function() {
+      pool.release(client);
+    });
+    archive.append(readable, { name: 'map_' + filenumber + '.dat' });
+  });
+}
+
+var pool = poolModule.Pool({
+  name     : 'readwritefile',
+  create   : function(callback) {
+    var resource = {};
+    callback(null, resource);
+  },
+  destroy  : function(client) { },
+  max      : 50,
+  // specifies how long a resource can stay idle in pool before being removed
+  idleTimeoutMillis : 30000,
+   // if true, logs via console.log - can also be a function
+  log : false
+});
 
 var myDate = {};
 

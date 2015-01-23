@@ -3,4 +3,5 @@ node_modules/phantomjs
 node_modules/yadda
 node_modules/async
 node_modules/node-nbt
+node_modules/generic-pool
 node_modules/.bin

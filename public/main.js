@@ -332,7 +332,7 @@ function updateResponse(step, data) {
     $('.step-4').addClass('hidden');
     $('.step-5').removeClass('hidden');
   } else if (step == 'error') {
-    response_text = "The server returned an error. If you think, this is a malfuntion, please report it (via github, twitter, ..).";
+    response_text = "The server returned an error. If you think, this is a malfunction, please report it (via github, twitter, ..).";
     $('#ajaxreply').html(response_text);
     $('.step-4').addClass('hidden');
     $('#instruction').addClass('hidden');
