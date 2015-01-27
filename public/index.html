@@ -15,11 +15,11 @@
     </div>
   </div>
   <div class="container">
-    <div class="alert alert-info">
+    <div id="contact_alert" class="alert alert-info">
       <button type="button" class="close" data-dismiss="alert">&times;</button>
       <b>Info: </b>If you encounter problems, please file an issue on <a href="https://github.com/djfun/mc-map-item-tool">github</a> or contact me via <a href="https://twitter.com/djfun">twitter</a> or <a href="https://www.youtube.com/user/netCuRLi">youtube</a>
     </div>
-    <div class="hero-unit">
+    <div id="title_hero" class="hero-unit">
       <h1>MC Map Item Tool</h1>
       <p>Your own image on a minecraft map item? Just use this easy five-step tool.</p>
     </div>
@@ -65,11 +65,13 @@
             <option>1</option>
           </select>
           <p>If you don't want to split your image into multiple maps, just leave the default value &quot;1&quot;.</p>
-          <input type='button' name='selectnumberofparts' id='selectnumberofparts' value='Select number' />
+          <button type="button" id="backtostep1" class="btn btn-default">Undo</button>
+          <button type='button' name='selectnumberofparts' id='selectnumberofparts' class="btn btn-primary">Select number</button>
         </div>
         <div class="step-3">
           <h2>Step 3 - Adjust colors for minecraft</h2>
-          <input type='button' name='reducecolors' id='reducecolors' value='Adjust colors' />
+          <button type="button" id="backtostep2" class="btn btn-default">Undo</button>
+          <button type='button' name='reducecolors' id='reducecolors' class="btn btn-primary">Adjust colors</button>
           <span id='reducecolors_progress'></span>
         </div>
         <div class="step-4">
@@ -77,13 +79,15 @@
           <h2>Step 4 - Let the server create a map file</h2>
           <p>How many maps does your world already have? (The created map will have this number as a filename. <a href="faq.html#q6">More information</a>)</p>
           <input type="text" style="height: 30px" id="map_number" name="map_number" value="0" /><br />
-          <input type='button' name='createfile' id='createfile' value='Create file' />
+          <button type="button" id="backtostep3" class="btn btn-default">Undo</button>
+          <button type='button' name='createfile' id='createfile' class="btn btn-primary">Create file</button>
         </div>
         <div class="step-5">
           <h2>Step 5 - Download the file</h2>
           <span id='ajaxreply'></span>
           <p id='instruction'>and then replace the map file in the save folder (See also <a href="faq.html#q1">What do I do with the map file?</a>)</p> 
-          <span id='ajaxreply_time'></span>
+          <span id='ajaxreply_time'></span><br />
+          <button type="button" id="backtostep4" class="btn btn-default">Undo</button>
         </div>
       </fieldset>
     </form>

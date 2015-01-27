@@ -21,41 +21,7 @@ function draw(ev) {
   }
 
   // list all settings from Cookies in span#list_settings
-
-  var colorSchemeToText = {
-    'no': 'Old colors',
-    'yes': 'Version 1.7.2 (2013)',
-    '181': 'Version 1.8.1 (2014)'
-  };
-  var dimensionToText = {
-    '0': 'Overworld',
-    '1': 'Nether',
-    '2': 'End'
-  };
-  var ditheringToText = {
-    'no': 'No dithering',
-    'floydsteinberg': 'Floyd-Steinberg',
-  };
-  var interpolationToText = {
-    'standard': 'Standard',
-    'nearest_neighbor': 'Nearest Neighbor'
-  };
-  var sett_colorSpace = Cookies.get('colourSpace') || 'laba';
-  var sett_colorScheme = colorSchemeToText[Cookies.get('newColors') || 'yes'];
-  var sett_dithering = ditheringToText[Cookies.get('dithering') || 'no'];
-  var sett_interpolation = interpolationToText[Cookies.get('interpolation') || 'standard'];
-  var sett_xCenter = Cookies.get('xcenter') || '0';
-  var sett_zCenter = Cookies.get('zcenter') || '0';
-  var sett_dimension = dimensionToText[Cookies.get('dimension') || '0'];
-
-  settings_string = '<tr><td>Color space</td><td>' + sett_colorSpace + '</td></tr>';
-  settings_string += '<tr><td>Color scheme</td><td>' + sett_colorScheme + '</td></tr>';
-  settings_string += '<tr><td>Dithering</td><td>' + sett_dithering + '</td></tr>';
-  settings_string += '<tr><td>Interpolation</td><td>' + sett_interpolation + '</td></tr>';
-  settings_string += '<tr><td>X Center</td><td>' + sett_xCenter + '</td></tr>';
-  settings_string += '<tr><td>Z Center</td><td>' + sett_zCenter + '</td></tr>';
-  settings_string += '<tr><td>Dimension</td><td>' + sett_dimension + '</td></tr>';
-  $('#list_settings').html('<table style="margin-left: auto; margin-right: auto; width: 300px">' + settings_string + '</table>');
+  list_settings();
 
   img.src = src;
   original_img.src = src;
@@ -82,6 +48,9 @@ function draw(ev) {
     $('.step-2').removeClass('hidden');
 
     $('.step-0-image').removeClass('hidden');
+
+    $('#title_hero').addClass('hidden');
+    $('#contact_alert').addClass('hidden');
   };
 }
 
@@ -122,13 +91,21 @@ function selectnumber(ev) {
     ctx_full.webkitImageSmoothingEnabled = false;
     ctx_full.msImageSmoothingEnabled = false;
     ctx_full.imageSmoothingEnabled = false;
+  } else {
+    ctx_full.mozImageSmoothingEnabled = true;
+    ctx_full.webkitImageSmoothingEnabled = true;
+    ctx_full.msImageSmoothingEnabled = true;
+    ctx_full.imageSmoothingEnabled = true;
   }
 
   ctx_full.drawImage(canvasCopy, 0, 0,
     canvasCopy.width, canvasCopy.height,
     spaceW, spaceH, img.width * ratio, img.height * ratio);
 
-  var ctx_full_scaled = document.getElementById('canvas_full_scaled').getContext('2d');
+  var canvas_full_scaled = document.getElementById('canvas_full_scaled');
+  var ctx_full_scaled = canvas_full_scaled.getContext('2d');
+  ctx_full_scaled.clearRect(0, 0, canvas_full_scaled.width, canvas_full_scaled.height);
+
   selected_ratio = map_parts_horizontal / map_parts_vertical;
   if (map_parts_horizontal >= map_parts_vertical) {
     ctx_full_scaled.drawImage(canvas_full, 0, 0, 256, 256 * (1/selected_ratio));
@@ -160,6 +137,9 @@ function drawCanvas(x, y) {
   canvas.width = 128;
   canvas.style.width = canvas.width * 2;
   canvas.style.height = canvas.height * 2;
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   ctx.drawImage(canvas_full, 128 * x, 128 * y, 128, 128,
     0, 0, 128, 128);
   ctx.scale(4, 4);
@@ -307,6 +287,32 @@ function createfile(ev) {
   }
 }
 
+function go_back_2_to_1() {
+  window.location.reload(false);
+}
+
+function go_back_3_to_2() {
+  $('.step-0-canvas').addClass('hidden');
+  $('.step-2').removeClass('hidden');
+  $('.step-3').addClass('hidden');
+  list_settings();
+}
+
+function go_back_4_to_3() {
+  $('#reducecolors_time').html('');
+  $('#reducecolors_progress').html('');
+  list_settings();
+  selectnumber();
+  $('.step-4').addClass('hidden');
+}
+
+function go_back_5_to_4() {
+  $('#ajaxreply').html('');
+  $('#ajaxreply_time').html('');
+  $('.step-5').addClass('hidden');
+  $('.step-4').removeClass('hidden');
+}
+
 function updateResponse(step, data) {
   var response_text;
 
@@ -340,6 +346,43 @@ function updateResponse(step, data) {
   }
 }
 
+function list_settings() {
+  var colorSchemeToText = {
+    'no': 'Old colors',
+    'yes': 'Version 1.7.2 (2013)',
+    '181': 'Version 1.8.1 (2014)'
+  };
+  var dimensionToText = {
+    '0': 'Overworld',
+    '1': 'Nether',
+    '2': 'End'
+  };
+  var ditheringToText = {
+    'no': 'No dithering',
+    'floydsteinberg': 'Floyd-Steinberg',
+  };
+  var interpolationToText = {
+    'standard': 'Standard',
+    'nearest_neighbor': 'Nearest Neighbor'
+  };
+  var sett_colorSpace = Cookies.get('colourSpace') || 'laba';
+  var sett_colorScheme = colorSchemeToText[Cookies.get('newColors') || 'yes'];
+  var sett_dithering = ditheringToText[Cookies.get('dithering') || 'no'];
+  var sett_interpolation = interpolationToText[Cookies.get('interpolation') || 'standard'];
+  var sett_xCenter = Cookies.get('xcenter') || '0';
+  var sett_zCenter = Cookies.get('zcenter') || '0';
+  var sett_dimension = dimensionToText[Cookies.get('dimension') || '0'];
+
+  settings_string = '<tr><td>Color space</td><td>' + sett_colorSpace + '</td></tr>';
+  settings_string += '<tr><td>Color scheme</td><td>' + sett_colorScheme + '</td></tr>';
+  settings_string += '<tr><td>Dithering</td><td>' + sett_dithering + '</td></tr>';
+  settings_string += '<tr><td>Interpolation</td><td>' + sett_interpolation + '</td></tr>';
+  settings_string += '<tr><td>X Center</td><td>' + sett_xCenter + '</td></tr>';
+  settings_string += '<tr><td>Z Center</td><td>' + sett_zCenter + '</td></tr>';
+  settings_string += '<tr><td>Dimension</td><td>' + sett_dimension + '</td></tr>';
+  $('#list_settings').html('<table style="margin-left: auto; margin-right: auto; width: 300px">' + settings_string + '</table>');
+}
+
 
 function makerandomid() {
   var text = "";
@@ -367,6 +410,12 @@ document.getElementById("createfile").addEventListener("click", createfile, fals
 
 document.getElementById("prevmap").addEventListener("click", prevMap, false);
 document.getElementById("nextmap").addEventListener("click", nextMap, false);
+
+document.getElementById("backtostep1").addEventListener("click", go_back_2_to_1, false);
+document.getElementById("backtostep2").addEventListener("click", go_back_3_to_2, false);
+document.getElementById("backtostep3").addEventListener("click", go_back_4_to_3, false);
+document.getElementById("backtostep4").addEventListener("click", go_back_5_to_4, false);
+
 
 $(document).ready(function() {
   // console.log('dom ready');
