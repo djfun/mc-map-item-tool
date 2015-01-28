@@ -5,52 +5,89 @@
   <link href="main.css" rel="stylesheet" media="screen">
 </head>
 <body>
-  <div class="navbar">
-    <div class="navbar-inner">
-      <ul class="nav">
-        <li><a href="index.html">Main</a></li>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">MC Map Item Tool</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="/">Main</a></li>
         <li><a href="faq.html">FAQ</a></li>
-        <li class="active"><a href="#">Settings</a></li>
+        <li class="active"><a href="settings.html">Settings</a></li>
       </ul>
     </div>
-  </div>
+  </nav>
   <div class="container">
-    <fieldset>
-      <label>Color space</label>
-      <select name="colorSpace" id="colorSpace">
-        <option value="laba">LABA</option>
-        <option value="rgba">RGBA</option>
-        <option value="hsva">HSVA</option>
-        <option value="xyza">XYZA</option>
-      </select>
-      <label>Color scheme (depends on the version of Minecraft)</label>
-      <select name="newColors" id="newColors">
-        <option value="no">Old colors</option>
-        <option value="yes">Version 1.7.2 (2013)</option>
-        <option value="181">Version 1.8.1 (2014)</option>
-      </select>
-      <label>Dithering</label>
-      <select name="dithering" id="dithering">
-        <option value="no">No dithering</option>
-        <option value="floydsteinberg">Floyd-Steinberg</option>
-      </select>
-      <label>Interpolation</label>
-      <select name="interpolation" id="interpolation">
-        <option value="standard">Standard</option>
-        <option value="nearest_neighbor">Nearest Neighbor</option>
-      </select>
-      <label>X center</label>
-      <input type="text" style="height: 30px" id="x_center" name="x_center" value="0" />
-      <label>Z center</label>
-      <input type="text" style="height: 30px" id="z_center" name="z_center" value="0" />
-      <label>Dimension</label>
-      <select name="dimesion" id="dimension">
-        <option value="0">Overworld</option>
-        <option value="1">Nether</option>
-        <option value="2">End</option>
-      </select>
-      <p><input type='button' name='savesettings' id='savesettings' value='Save settings' class='btn' /></p>
-    </fieldset>
+    <form class="form-horizontal">
+      <fieldset>
+        <div class="form-group">
+          <label for="colorSpace" class="col-sm-3 control-label">Color space</label>
+          <div class="col-sm-9">
+            <select name="colorSpace" id="colorSpace" class="form-control">
+              <option value="laba">LABA</option>
+              <option value="rgba">RGBA</option>
+              <option value="hsva">HSVA</option>
+              <option value="xyza">XYZA</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="newColors" class="col-sm-3 control-label">Color scheme (depends on the version of Minecraft)</label>
+          <div class="col-sm-9">
+            <select name="newColors" id="newColors" class="form-control">
+              <option value="no">Old colors</option>
+              <option value="yes">Version 1.7.2 (2013)</option>
+              <option value="181">Version 1.8.1 (2014)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="dithering" class="col-sm-3 control-label">Dithering</label>
+          <div class="col-sm-9">
+            <select name="dithering" id="dithering" class="form-control">
+              <option value="no">No dithering</option>
+              <option value="floydsteinberg">Floyd-Steinberg</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="interpolation" class="col-sm-3 control-label">Interpolation</label>
+          <div class="col-sm-9">
+            <select name="interpolation" id="interpolation">
+              <option value="standard">Standard</option>
+              <option value="nearest_neighbor">Nearest Neighbor</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="x_center" class="col-sm-3 control-label">X center</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="x_center" name="x_center" value="0" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="z_center" class="col-sm-3 control-label">Z center</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="z_center" name="z_center" value="0" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="dimension" class="col-sm-3 control-label">Dimension</label>
+          <div class="col-sm-9">
+            <select name="dimesion" id="dimension" class="form-control">
+              <option value="0">Overworld</option>
+              <option value="1">Nether</option>
+              <option value="2">End</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-10">
+            <input type='button' name='savesettings' id='savesettings' value='Save settings' class="btn btn-primary" />
+          </div>
+        </div>
+      </fieldset>
+    </form>
   </div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
   <script src="js/bootstrap.min.js"></script>

@@ -11,6 +11,28 @@
   display: none;
 }
 
+.fileupload {
+  margin: 0 auto;
+}
+
+.jumbotron {
+  background-image:url('logo_bg.png');
+  color: #ddd;
+}
+
+/* centered columns styles */
+.row-centered {
+    text-align:center;
+}
+.col-centered {
+    display:inline-block;
+    float:none;
+    /* reset the text-align */
+    text-align:left;
+    /* inline-block space fix */
+    margin-right:-4px;
+}
+
 #original_img.pixelated {
   image-rendering:optimizeSpeed;             /* Legal fallback */
   image-rendering:-moz-crisp-edges;          /* Firefox        */

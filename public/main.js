@@ -45,12 +45,23 @@ function draw(ev) {
     }
 
     $('.step-1').addClass('hidden');
-    $('.step-2').removeClass('hidden');
 
     $('.step-0-image').removeClass('hidden');
 
     $('#title_hero').addClass('hidden');
     $('#contact_alert').addClass('hidden');
+
+    $('#tabs a[href="#step1"]').click(function (e) {
+      e.preventDefault();
+      go_back_2_to_1();
+    });
+
+    $('#tabs a[href="#step3"]').parent().addClass('disabled');
+    $('#tabs a[href="#step4"]').parent().addClass('disabled');
+    $('#tabs a[href="#step5"]').parent().addClass('disabled');
+
+    $('#tabs').removeClass('hidden');
+    $('#tabs a[href="#step2"]').tab('show');
   };
 }
 
@@ -125,8 +136,15 @@ function selectnumber(ev) {
   map_x = 0;
   map_y = 0;
   $('.step-0-canvas').removeClass('hidden');
-  $('.step-2').addClass('hidden');
-  $('.step-3').removeClass('hidden');
+
+  $('#tabs a[href="#step2"]').click(function (e) {
+    e.preventDefault();
+    go_back_3_to_2();
+  });
+
+  $('#tabs a[href="#step3"]').parent().removeClass('disabled');
+
+  $('#tabs a[href="#step3"]').tab('show');
 }
 
 function drawCanvas(x, y) {
@@ -135,8 +153,8 @@ function drawCanvas(x, y) {
 
   canvas.height = 128;
   canvas.width = 128;
-  canvas.style.width = canvas.width * 2;
-  canvas.style.height = canvas.height * 2;
+  $(canvas).width(canvas.width * 2);
+  $(canvas).height(canvas.height * 2);
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -152,6 +170,7 @@ function drawCanvas(x, y) {
 }
 
 function prevMap(ev) {
+  ev.preventDefault();
   if (!(map_x === 0 && map_y === 0)) {
     if (map_x === 0) {
       map_y--;
@@ -164,6 +183,7 @@ function prevMap(ev) {
 }
 
 function nextMap(ev) {
+  ev.preventDefault();
   if (!(map_x === map_parts_horizontal - 1 && map_y === map_parts_vertical - 1)) {
     if (map_x === map_parts_horizontal - 1) {
       map_y++;
@@ -205,10 +225,25 @@ function reducecolors(ev) {
       }
 
       drawCanvas(map_x, map_y);
-      $('.step-3').addClass('hidden');
       $('#reducecolors').removeClass('hidden');
-      $('.step-4').removeClass('hidden');
+
+      $('#tabs a[href="#step2"]').off('click');
+      $('#tabs a[href="#step3"]').off('click');
+      $('#tabs a[href="#step2"]').click(function (e) {
+        e.preventDefault();
+        go_back_4_to_3();
+        go_back_3_to_2();
+      });
+      $('#tabs a[href="#step3"]').click(function (e) {
+        e.preventDefault();
+        go_back_4_to_3();
+      });
+
+      $('#tabs a[href="#step4"]').parent().removeClass('disabled');
+
+      $('#tabs a[href="#step4"]').tab('show');
       duration = Math.abs(time_start - new Date()) / 1000;
+      $('#reducecolors_time').parent().removeClass('hidden');
       $('#reducecolors_time').html('Reducing colors took ' + duration + ' seconds.');
     } else if (oEvent.data.step == 'percentage') {
       $('#reducecolors_progress').html(oEvent.data.percentage + '% complete.');
@@ -220,7 +255,7 @@ function reducecolors(ev) {
 }
 
 function createfile(ev) {
-  $('#reducecolors_time').addClass('hidden');
+  $('#reducecolors_time').parent().addClass('hidden');
 
   var time_start = new Date();
 
@@ -293,24 +328,26 @@ function go_back_2_to_1() {
 
 function go_back_3_to_2() {
   $('.step-0-canvas').addClass('hidden');
-  $('.step-2').removeClass('hidden');
-  $('.step-3').addClass('hidden');
+  $('#tabs a[href="#step2"]').tab('show');
+  $('#tabs a[href="#step3"]').parent().addClass('disabled');
   list_settings();
 }
 
 function go_back_4_to_3() {
+  $('#reducecolors_time').parent().addClass('hidden');
   $('#reducecolors_time').html('');
   $('#reducecolors_progress').html('');
+  $('#tabs a[href="#step4"]').parent().addClass('disabled');
   list_settings();
   selectnumber();
-  $('.step-4').addClass('hidden');
 }
 
 function go_back_5_to_4() {
   $('#ajaxreply').html('');
+  $('#ajaxreply_time').parent().addClass('hidden');
   $('#ajaxreply_time').html('');
-  $('.step-5').addClass('hidden');
-  $('.step-4').removeClass('hidden');
+  $('#tabs a[href="#step4"]').tab('show');
+  $('#tabs a[href="#step5"]').parent().addClass('disabled');
 }
 
 function updateResponse(step, data) {
@@ -321,29 +358,47 @@ function updateResponse(step, data) {
         data['mapnumber'] + '">Download</a>' + " (map_" + data['mapnumber'] + ".dat)";
     $('#ajaxreply').html(response_text);
     duration = Math.abs(data.time_start - new Date()) / 1000;
+    $('#ajaxreply_time').parent().removeClass('hidden');
     $('#ajaxreply_time').html('Creating map file took ' + duration + ' seconds.');
-    $('.step-4').addClass('hidden');
-    $('.step-5').removeClass('hidden');
+    $('#tabs a[href="#step5"]').tab('show');
   } else if (step == 'zip_file_finished') {
     console.log(data);
     response_text = '<a href="tmp/' + data['filename'] + '.zip">Download</a>' + " (Zip archive with map files)";
     $('#ajaxreply').html(response_text);
     duration = Math.abs(data.time_start - new Date()) / 1000;
+    $('#ajaxreply_time').parent().removeClass('hidden');
     $('#ajaxreply_time').html('Creating map files took ' + duration + ' seconds.');
-    $('.step-4').addClass('hidden');
-    $('.step-5').removeClass('hidden');
+    $('#tabs a[href="#step5"]').tab('show');
   } else if (step == 'zip_file_part') {
     response_text = "Creating maps: " + data['done_count'] + " of " + data['map_count'] + " done.";
     $('#ajaxreply').html(response_text);
-    $('.step-4').addClass('hidden');
-    $('.step-5').removeClass('hidden');
+    $('#tabs a[href="#step5"]').tab('show');
   } else if (step == 'error') {
     response_text = "The server returned an error. If you think, this is a malfunction, please report it (via github, twitter, ..).";
     $('#ajaxreply').html(response_text);
-    $('.step-4').addClass('hidden');
     $('#instruction').addClass('hidden');
-    $('.step-5').removeClass('hidden');
+    $('#tabs a[href="#step5"]').tab('show');
   }
+  $('#tabs a[href="#step2"]').off('click');
+  $('#tabs a[href="#step3"]').off('click');
+  $('#tabs a[href="#step4"]').off('click');
+  $('#tabs a[href="#step2"]').click(function (e) {
+    e.preventDefault();
+    go_back_5_to_4();
+    go_back_4_to_3();
+    go_back_3_to_2();
+  });
+  $('#tabs a[href="#step3"]').click(function (e) {
+    e.preventDefault();
+    go_back_5_to_4();
+    go_back_4_to_3();
+  });
+  $('#tabs a[href="#step4"]').click(function (e) {
+    e.preventDefault();
+    go_back_5_to_4();
+  });
+
+  $('#tabs a[href="#step5"]').parent().removeClass('disabled');
 }
 
 function list_settings() {
@@ -411,18 +466,11 @@ document.getElementById("createfile").addEventListener("click", createfile, fals
 document.getElementById("prevmap").addEventListener("click", prevMap, false);
 document.getElementById("nextmap").addEventListener("click", nextMap, false);
 
-document.getElementById("backtostep1").addEventListener("click", go_back_2_to_1, false);
-document.getElementById("backtostep2").addEventListener("click", go_back_3_to_2, false);
-document.getElementById("backtostep3").addEventListener("click", go_back_4_to_3, false);
-document.getElementById("backtostep4").addEventListener("click", go_back_5_to_4, false);
-
-
 $(document).ready(function() {
   // console.log('dom ready');
   $('.step-0-image').addClass('hidden');
   $('.step-0-canvas').addClass('hidden');
-  $('.step-2').addClass('hidden');
-  $('.step-3').addClass('hidden');
-  $('.step-4').addClass('hidden');
-  $('.step-5').addClass('hidden');
+  $('#reducecolors_time').parent().addClass('hidden');
+  $('#ajaxreply_time').parent().addClass('hidden');
+  $('#tabs').addClass('hidden');
 });

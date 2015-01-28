@@ -16,6 +16,7 @@ new Yadda.FeatureFileSearch(fs.workingDirectory + '/tests/yadda/features').each(
 
     casper.test.begin(feature.title, function suite(test) {
         async.eachSeries(feature.scenarios, function(scenario, next) {
+            casper.options.viewportSize = {width: 1024, height: 768};
             casper.start();
             console.log("");
             casper.test.info(scenario.title);

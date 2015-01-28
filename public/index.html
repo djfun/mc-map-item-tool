@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
   <title>mc-map-item-tool</title>
@@ -5,36 +6,99 @@
   <link href="main.css" rel="stylesheet" media="screen">
 </head>
 <body>
-  <div class="navbar">
-    <div class="navbar-inner">
-      <ul class="nav">
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">MC Map Item Tool</a>
+      </div>
+      <ul class="nav navbar-nav">
         <li class="active"><a href="/">Main</a></li>
         <li><a href="faq.html">FAQ</a></li>
         <li><a href="settings.html">Settings</a></li>
       </ul>
     </div>
-  </div>
+  </nav>
   <div class="container">
     <div id="contact_alert" class="alert alert-info">
       <button type="button" class="close" data-dismiss="alert">&times;</button>
       <b>Info: </b>If you encounter problems, please file an issue on <a href="https://github.com/djfun/mc-map-item-tool">github</a> or contact me via <a href="https://twitter.com/djfun">twitter</a> or <a href="https://www.youtube.com/user/netCuRLi">youtube</a>
     </div>
-    <div id="title_hero" class="hero-unit">
+    <div class="alert alert-success" role="alert">
+      <span id='reducecolors_time'></span>
+    </div>
+    <div class="alert alert-success" role="alert">
+      <span id='ajaxreply_time'></span>
+    </div>
+    <div id="title_hero" class="jumbotron">
       <h1>MC Map Item Tool</h1>
       <p>Your own image on a minecraft map item? Just use this easy five-step tool.</p>
     </div>
     <form>
       <fieldset>
-        <div class='step-0-image'>
-          <div style="float:left; width: 50%;">
-            <p>Original image:</p>
-            <img id="original_img" width="256" height="256" />
+        <div role="tabpanel" id="tabs">
+          <!-- Nav tabs -->
+          <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation"><a href="#step1" aria-controls="step1" role="tab">Step 1</a></li>
+            <li role="presentation"><a href="#step2" aria-controls="step2" role="tab">Step 2</a></li>
+            <li role="presentation"><a href="#step3" aria-controls="step3" role="tab">Step 3</a></li>
+            <li role="presentation"><a href="#step4" aria-controls="step4" role="tab">Step 4</a></li>
+            <li role="presentation"><a href="#step5" aria-controls="step5" role="tab">Step 5</a></li>
+          </ul>
+
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane" id="step1">...</div>
+            <div role="tabpanel" class="tab-pane" id="step2">
+              <div class="step-2">
+                <h2>Step 2 - Select number of parts you want to split the image into</h2>
+                <p>The more parts the longer the following steps will take. If you have a slow computer, consider lowering the amount of parts!</p>
+                <div class="row row-centered">
+                  <div class="form-group col-xs-6 col-centered">
+                    <label for="number_horizontal">Horizontal</label>
+                    <select name="width_horizontal" id="number_horizontal" class="form-control">
+                      <option>1</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="row row-centered">
+                  <div class="form-group col-xs-6 col-centered">
+                    <label for="number_vertical">Vertical</label>
+                    <select name="width_vertical" id="number_vertical" class="form-control">
+                      <option>1</option>
+                    </select>
+                  </div>
+                </div>
+                <p>If you don't want to split your image into multiple maps, just leave the default value &quot;1&quot;.</p>
+                <button type='button' name='selectnumberofparts' id='selectnumberofparts' class="btn btn-primary">Select number</button>
+              </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="step3">
+              <div class="step-3">
+                <h2>Step 3 - Adjust colors for minecraft</h2>
+                <button type='button' name='reducecolors' id='reducecolors' class="btn btn-primary">Adjust colors</button>
+                <span id='reducecolors_progress'></span>
+              </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="step4">
+              <div class="step-4">
+                <h2>Step 4 - Let the server create a map file</h2>
+                <p>How many maps does your world already have? (The created map will have this number as a filename. <a href="faq.html#q6">More information</a>)</p>
+                <div class="row row-centered">
+                  <div class="form-group col-xs-6 col-centered">
+                    <input type="text" class="form-control" id="map_number" name="map_number" value="0" />
+                  </div>
+                </div>
+                <button type='button' name='createfile' id='createfile' class="btn btn-primary">Create file</button>
+              </div>
+            </div>
+            <div role="tabpanel" class="tab-pane" id="step5">
+              <div class="step-5">
+                <h2>Step 5 - Download the file</h2>
+                <span id='ajaxreply'></span>
+                <p id='instruction'>and then replace the map file in the save folder (See also <a href="faq.html#q1">What do I do with the map file?</a>)</p> 
+              </div>
+            </div>
           </div>
-          <div style="float:right; width: 50%;">
-            <p>Settings:</p>
-            <span id="list_settings"></span>
-          </div>
-          <div class="spacer" style="clear: both;"></div>
         </div>
         <div class='step-0-canvas'>
           <a name="canvas"></a>
@@ -51,43 +115,20 @@
         </div>
         <div class="step-1">
           <h2>Step 1 - Select an image file</h2>
-          <input type='file' name='img' size='65' id='uploadimage' />
+          <div class="form-group">
+            <input type='file' name='img' size='65' id='uploadimage' class='fileupload' />
+          </div>
         </div>
-        <div class="step-2">
-          <h2>Step 2 - Select number of parts you want to split the image into</h2>
-          <p>The more parts the longer the following steps will take. If you have a slow computer, consider lowering the amount of parts!</p>
-          <label>Horizontal</label>
-          <select name="width_horizontal" id="number_horizontal">
-            <option>1</option>
-          </select>
-          <label>Vertical</label>
-          <select name="width_vertical" id="number_vertical">
-            <option>1</option>
-          </select>
-          <p>If you don't want to split your image into multiple maps, just leave the default value &quot;1&quot;.</p>
-          <button type="button" id="backtostep1" class="btn btn-default">Undo</button>
-          <button type='button' name='selectnumberofparts' id='selectnumberofparts' class="btn btn-primary">Select number</button>
-        </div>
-        <div class="step-3">
-          <h2>Step 3 - Adjust colors for minecraft</h2>
-          <button type="button" id="backtostep2" class="btn btn-default">Undo</button>
-          <button type='button' name='reducecolors' id='reducecolors' class="btn btn-primary">Adjust colors</button>
-          <span id='reducecolors_progress'></span>
-        </div>
-        <div class="step-4">
-          <span id='reducecolors_time'></span>
-          <h2>Step 4 - Let the server create a map file</h2>
-          <p>How many maps does your world already have? (The created map will have this number as a filename. <a href="faq.html#q6">More information</a>)</p>
-          <input type="text" style="height: 30px" id="map_number" name="map_number" value="0" /><br />
-          <button type="button" id="backtostep3" class="btn btn-default">Undo</button>
-          <button type='button' name='createfile' id='createfile' class="btn btn-primary">Create file</button>
-        </div>
-        <div class="step-5">
-          <h2>Step 5 - Download the file</h2>
-          <span id='ajaxreply'></span>
-          <p id='instruction'>and then replace the map file in the save folder (See also <a href="faq.html#q1">What do I do with the map file?</a>)</p> 
-          <span id='ajaxreply_time'></span><br />
-          <button type="button" id="backtostep4" class="btn btn-default">Undo</button>
+        <div class='step-0-image'>
+          <div style="float:left; width: 50%;">
+            <p>Original image:</p>
+            <img id="original_img" width="256" height="256" />
+          </div>
+          <div style="float:right; width: 50%;">
+            <p>Settings:</p>
+            <span id="list_settings"></span>
+          </div>
+          <div class="spacer" style="clear: both;"></div>
         </div>
       </fieldset>
     </form>
