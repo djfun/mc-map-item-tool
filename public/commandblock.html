@@ -5,48 +5,76 @@
   <link href="main.css" rel="stylesheet" media="screen">
 </head>
 <body>
-  <div class="navbar">
-    <div class="navbar-inner">
-      <ul class="nav">
-        <li><a href="index.html">Main</a></li>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">MC Map Item Tool</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li><a href="/">Main</a></li>
         <li><a href="faq.html">FAQ</a></li>
         <li><a href="settings.html">Settings</a></li>
+        <li class="active"><a href="commandblock.html">Command Generator (experimental)</a></li>
       </ul>
     </div>
-  </div>
+  </nav>
 
   <div class="container">
-    <fieldset style="width: 500px;">
-      <label>Number of parts: vertical</label>
-      <input type="text" style="height: 30px" id="map_parts_vertical" name="map_parts_vertical" value="1" />
-      <label>Number of parts: horizontal</label>
-      <input type="text" style="height: 30px" id="map_parts_horizontal" name="map_parts_horizontal" value="1" />
-      <label>Direction the item frames should face</label>
-      <select name="direction" id="direction">
-        <option value="0">Towards positive z</option>
-        <option value="1">Towards negative x</option>
-        <option value="2">Towards negative z</option>
-        <option value="3">Towards positive x</option>
-      </select>
-      <label>Number of the first map</label>
-      <input type="text" style="height: 30px" id="mapnumber" name="mapnumber" value="0" />
-      <label>Output</label>
-      <textarea class="form-control input-xxlarge" rows="10" id="output"></textarea>
-      <p><input type='button' name='submit' id='submit' value='Create command' class='btn' /></p>
-    </fieldset>
+    <form class="form-horizontal">
+      <fieldset>
+        <div class="form-group">
+          <label for="map_parts_vertical" class="col-sm-3 control-label">Number of parts: vertical</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="map_parts_vertical" name="map_parts_vertical" value="1" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="map_parts_horizontal" class="col-sm-3 control-label">Number of parts: horizontal</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="map_parts_horizontal" name="map_parts_horizontal" value="1" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="direction" class="col-sm-3 control-label">Direction the item frames should face</label>
+          <div class="col-sm-9">
+            <select name="direction" id="direction" class="form-control">
+              <option value="0">Towards positive z</option>
+              <option value="1">Towards negative x</option>
+              <option value="2">Towards negative z</option>
+              <option value="3">Towards positive x</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="mapnumber" class="col-sm-3 control-label">Number of the first map</label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="mapnumber" name="mapnumber" value="0" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="output" class="col-sm-3 control-label">Output</label>
+          <div class="col-sm-9">
+            <textarea class="form-control input-xxlarge" rows="10" id="output"></textarea>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-offset-3 col-sm-10">
+            <input type='button' name='submit' id='submit' value='Create command' class="btn btn-primary" /></p>
+          </div>
+        </div>
+      </fieldset>
+    </form>
 
     <div class="bs-callout bs-callout-info">
       <h4>Get all maps into the world with one command (Minecraft 1.8 and newer)</h4>
       <p>This (still experimental) feature allows you to get the map items from the main
         tool into your minecraft world already placed on a wall in the correct order.</p>
-      <p>To use it, simply enter the data you used to create the map item files, which
-        you should have already placed into the data folder of your minecraft world. Open your
+      <p>To use it, simply enter the data you used to create the map item files. Open your
         minecraft world, place a command block (/give @p minecraft:command_block) 2 blocks in front
         of where the bottom left corner of the item frame wall should be. Copy the command from
         the output text field and paste it into the command block. Place a button onto
-        the command block, click it and watch the block do it's magic.</p>
-      <p>If that explanation was to complicated, there will be a video explaining where
-        exactly you have to place what. Alternatively you can just make a new creative
+        the command block, click it and watch the block do its magic.</p>
+      <p>If that explanation was to complicated, you can just make a new creative
         test world and try it out.</p>
       <p>Please note, that if you do not understand what the command does, you should probably
         make a backup of your world if there are important things near the location of
@@ -54,7 +82,7 @@
     </div>
 
   </div>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+  <script src="jquery-1.10.2.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
   <script src="commandblock.js"></script>
 </body>
