@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "casperjs test tests/yadda/main_test.js",
-    "start": "node server.js"
+    "start": "mkdir -p public/tmp && node server.js"
   },
   "repository": {
     "type": "git",
