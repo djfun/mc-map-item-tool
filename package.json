@@ -27,6 +27,7 @@
     "yadda": "^0.11.2"
   },
   "dependencies": {
+    "archiver": "^0.14.2",
     "generic-pool": "^2.1.1",
     "node-nbt": "^1.0.0",
     "node-static": "^0.7.6"

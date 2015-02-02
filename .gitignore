@@ -5,4 +5,5 @@ node_modules/async
 node_modules/node-nbt
 node_modules/generic-pool
 node_modules/node-static
+node_modules/archiver
 node_modules/.bin
