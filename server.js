@@ -65,7 +65,7 @@ function NotInTmpFilesException(value) {
   };
 }
 
-app.listen(process.env.PORT || 8080, process.env.HOST || 'localhost');
+app.listen(process.env.PORT || 8080, process.env.HOST);
 
 function handler (req, res) {
   var referer = req.headers.referer;
