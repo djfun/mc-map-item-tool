@@ -7,3 +7,4 @@ node_modules/generic-pool
 node_modules/node-static
 node_modules/archiver
 node_modules/.bin
+public/google*

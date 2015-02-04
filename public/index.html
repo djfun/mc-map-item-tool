@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>mc-map-item-tool</title>
+  <title>MC Map Item Tool</title>
   <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
   <link href="main.css" rel="stylesheet" media="screen">
 </head>
@@ -87,6 +87,13 @@
                 <div class="row row-centered">
                   <div class="form-group col-xs-6 col-centered">
                     <input type="text" class="form-control" id="map_number" name="map_number" value="0" />
+                  </div>
+                </div>
+                <div class="row row-centered notification-form-div">
+                  <div class="form-group col-xs-6 col-centered checkbox">
+                    <label><input type="checkbox" id="notification" name="notification" />&nbsp;
+                      Get a browser notification when the created file is ready to download.
+                    </label>
                   </div>
                 </div>
                 <button type='button' name='createfile' id='createfile' class="btn btn-primary">Create file</button>

@@ -351,7 +351,7 @@ function go_back_5_to_4() {
 }
 
 function updateResponse(step, data) {
-  var response_text;
+  var response_text, notification;
 
   if (step == 'single_file_finished') {
     response_text = '<a href="tmp/' + data['filename'] + '.dat?mapnumber=' +
@@ -361,6 +361,11 @@ function updateResponse(step, data) {
     $('#ajaxreply_time').parent().removeClass('hidden');
     $('#ajaxreply_time').html('Creating map file took ' + duration + ' seconds.');
     $('#tabs a[href="#step5"]').tab('show');
+    if ($('#notification').is(':checked') && Notification.permission === "granted") {
+      notification = new Notification("MC Map Item Tool", {
+        body: "Creating map file finished in " + duration + " seconds."
+      });
+    }
   } else if (step == 'zip_file_finished') {
     console.log(data);
     response_text = '<a href="tmp/' + data['filename'] + '.zip">Download</a>' + " (Zip archive with map files)";
@@ -369,6 +374,11 @@ function updateResponse(step, data) {
     $('#ajaxreply_time').parent().removeClass('hidden');
     $('#ajaxreply_time').html('Creating map files took ' + duration + ' seconds.');
     $('#tabs a[href="#step5"]').tab('show');
+    if ($('#notification').is(':checked') && Notification.permission === "granted") {
+      notification = new Notification("MC Map Item Tool", {
+        body: "Creating map files finished in " + duration + " seconds."
+      });
+    }
   } else if (step == 'zip_file_part') {
     response_text = "Creating maps: " + data['done_count'] + " of " + data['map_count'] + " done.";
     $('#ajaxreply').html(response_text);
@@ -378,6 +388,11 @@ function updateResponse(step, data) {
     $('#ajaxreply').html(response_text);
     $('#instruction').addClass('hidden');
     $('#tabs a[href="#step5"]').tab('show');
+    if ($('#notification').is(':checked') && Notification.permission === "granted") {
+      notification = new Notification("MC Map Item Tool", {
+        body: response_text
+      });
+    }
   }
   $('#tabs a[href="#step2"]').off('click');
   $('#tabs a[href="#step3"]').off('click');
@@ -473,4 +488,16 @@ $(document).ready(function() {
   $('#reducecolors_time').parent().addClass('hidden');
   $('#ajaxreply_time').parent().addClass('hidden');
   $('#tabs').addClass('hidden');
+  if (!("Notification" in window)) {
+    // This browser does not support notifications
+    $('.notification-form-div').addClass('hidden');
+  } else {
+    $('#notification').change(function() {
+      if(this.checked) {
+        if (Notification.permission !== 'denied') {
+          Notification.requestPermission();
+        }
+      }
+    });
+  }
 });
