@@ -2,9 +2,9 @@
   "name": "minecraft-map-item-tool",
   "version": "1.3.1",
   "description": "web tool for converting images to minecraft maps",
-  "main": "server.js",
+  "main": "lib/server.js",
   "scripts": {
-    "test": "casperjs test tests/yadda/main_test.js",
+    "test": "gulp && casperjs test tests/yadda/main_test.js && gulp clean",
     "start": "gulp && node lib/server.js",
     "build": "gulp",
     "clean": "gulp clean"

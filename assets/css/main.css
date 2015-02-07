@@ -16,7 +16,7 @@
 }
 
 .jumbotron {
-  background-image:url('logo_bg.png');
+  background-image:url('../img/logo_bg.png');
   color: #ddd;
 }
 

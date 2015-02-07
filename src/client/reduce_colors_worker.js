@@ -1,4 +1,4 @@
-importScripts("Colour.js");
+importScripts("js/Colour.js");
 
 var all_maps_data;
 var colourSpace;

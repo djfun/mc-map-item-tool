@@ -12,3 +12,5 @@ node_modules/gulp
 node_modules/del
 node_modules/merge-stream
 assets/html/google*
+public/*
+lib/*
