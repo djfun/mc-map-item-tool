@@ -7,4 +7,8 @@ node_modules/generic-pool
 node_modules/node-static
 node_modules/archiver
 node_modules/.bin
-public/google*
+node_modules/mkdirp
+node_modules/gulp
+node_modules/del
+node_modules/merge-stream
+assets/html/google*
