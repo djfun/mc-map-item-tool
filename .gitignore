@@ -11,6 +11,9 @@ node_modules/mkdirp
 node_modules/gulp
 node_modules/del
 node_modules/merge-stream
+node_modules/gulp-6to5
+node_modules/6to5
+node_modules/moment
 assets/html/google*
 public/*
 lib/*

@@ -29,12 +29,15 @@
     "yadda": "^0.11.2"
   },
   "dependencies": {
+    "6to5": "^3.4.1",
     "archiver": "^0.14.2",
     "del": "^1.1.1",
     "generic-pool": "^2.1.1",
     "gulp": "^3.8.10",
+    "gulp-6to5": "^3.0.0",
     "merge-stream": "^0.1.7",
     "mkdirp": "^0.5.0",
+    "moment": "^2.9.0",
     "node-nbt": "^1.0.0",
     "node-static": "^0.7.6"
   }

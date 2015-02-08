@@ -1,55 +1,36 @@
-var node_static = require('node-static');
-var app = require('http').createServer(handler);
-var url  = require('url');
+"use strict";
 
-var querystring = require('querystring');
+require("6to5/polyfill");
 
-var file = new(node_static.Server)('./public');
-
+var zlib = require('zlib');
+var url = require('url');
 var fs = require('fs');
+var http = require('http');
+
+var nodeStatic = require('node-static');
+var querystring = require('querystring');
+var crypto = require('crypto');
+var archiver = require('archiver');
+var poolModule = require('generic-pool');
+var moment = require('moment');
+
+var file = new (nodeStatic.Server)('./public');
 var TAG = require('node-nbt').TAG;
 var NbtReader = require('node-nbt').NbtReader;
 var NbtWriter = require('node-nbt').NbtWriter;
 
-var zlib = require('zlib');
+var TMP_DIR = './public/tmp/';
 
-var crypto = require('crypto');
-
-var archiver = require('archiver');
-
-var poolModule = require('generic-pool');
-
-// on start delete all files in ./tmp
-fs.readdir('./public/tmp', function(err, files) {
-  if (err) {
-    throw err;
-  } else {
-    for (var i = 0; i < files.length; i++) {
-      delete_tmp_files(files[i]);
-    }
-  }
-});
-
-var delete_tmp_files = function (file) {
-  fs.unlink('./public/tmp/' + file, function (err) {
-    if (err) {
-      throw err;
-    } else {
-      console.log(myDate.getCurrent() + ' Successfully deleted /tmp/' + file);
-    }
-  });
-};
-
-var tmp_files = {
-  addFile: function(hash) {
+var tmpFiles = {
+  addFile(hash) {
     this.files[hash] = (new Date()).getTime();
     this.removeOldFiles();
   },
-  removeOldFiles: function() {
+  removeOldFiles() {
     var time = (new Date()).getTime();
-    for (var hash in this.files) {
-      if (this.files[hash] < time - (30 * 60 * 1000)) {
-        delete_tmp_files(hash);
+    for (let [hash, fileTime] of this.files.entries()) {
+      if (fileTime < time - (30 * 60 * 1000)) {
+        deleteTmpFiles(hash);
         delete this.files[hash];
       }
     }
@@ -57,234 +38,247 @@ var tmp_files = {
   files: {}
 };
 
-function NotInTmpFilesException(value) {
-  this.value = value;
-  this.message = " is not in tmp_files";
-  this.toString = function() {
-    return 'NotInTmpFilesException: ' + this.value + this.message;
-  };
+function log(message) {
+  console.log(`${moment().format('YYYY-MM-DD HH:mm:ss')} ${message}`);
 }
 
-app.listen(process.env.PORT || 8080, process.env.HOST);
-
-function handler (req, res) {
-  var referer = req.headers.referer;
-  if (referer) {
-    if (referer.indexOf(req.headers.host) !== 7) {
-      console.log(myDate.getCurrent() + ' Referer: ' + referer);
-    }
-  }
-
-  var body='';
-  req.on('data', function (data) {
-    body +=data;
-  });
-  req.addListener('end', function () {
-    var error, decodedBody, map_item_array, x_center, z_center, dimension, randomid, mapnumber;
-    if (req.method == 'GET' && req.url.substr(0, 4) == '/tmp') {
-      var url_parts = url.parse(req.url, true);
-      var query = url_parts.query;
-      var pathname = url_parts.pathname;
-      if (tmp_files.files[pathname.substr(5)]) {
-        try {
-          console.log(myDate.getCurrent() + ' Serve tmp file: ' + pathname);
-          
-          mapnumber = parseInt(query.mapnumber, 10) || 0;
-          var downloadfilename = pathname.slice(-3) == 'dat' ? 'map_' + mapnumber + '.dat' : 'map_items.zip';
-          file.serveFile(pathname, 200,
-            {'Content-Disposition': 'attachment; filename="' + downloadfilename + '"'}, req, res);
-        } catch (e) {
-          console.log(myDate.getCurrent() + ' Error:');
-          console.log(e);
-          res.writeHead(500);
-          res.end("Internal server error");
-        }
-      } else {
-        res.writeHead(404);
-        res.end("File doesn't exist");
-      }
-    } else if (req.method == 'POST' && req.url == '/createfile') {
-      try {
-        decodedBody = querystring.parse(body);
-        // console.log(JSON.stringify(decodedBody));
-        map_item_array = JSON.parse(decodedBody.map_item);
-        x_center = parseInt(decodedBody.x_center, 10);
-        z_center = parseInt(decodedBody.z_center, 10);
-        dimension = parseInt(decodedBody.dimension, 10);
-        randomid = decodedBody.randomid;
-        if (randomid !== "") {
-          randomid+= "_";
-        }
-        error = false;
-        // console.log(map_item_array.length);
-        if (map_item_array.length == 16384) {
-          for (var i = 0; i < map_item_array.length; i++) {
-            if (map_item_array[i] > 128) {
-              error = true;
-            }
-          }
-        } else {
-          error = true;
-        }
-      } catch (e) {
-        error = true;
-        console.log(myDate.getCurrent() + ' Error:');
-        console.log(e);
-        res.writeHead(500);
-        res.end("Internal server error");
-      }
-      if (!error) {
-        var map_file = {
-          type: TAG.COMPOUND,
-          name: '',
-          val: [
-            {
-              name: 'data',
-              type: TAG.COMPOUND,
-              val: [
-                {
-                  name: 'scale',
-                  type: TAG.BYTE,
-                  val: 0
-                },
-                {
-                  name: 'dimension',
-                  type: TAG.BYTE,
-                  val: dimension
-                },
-                {
-                  name: 'height',
-                  type: TAG.SHORT,
-                  val: 128
-                },
-                {
-                  name: 'width',
-                  type: TAG.SHORT,
-                  val: 128
-                },
-                {
-                  name: 'xCenter',
-                  type: TAG.INT,
-                  val: x_center
-                },
-                {
-                  name: 'zCenter',
-                  type: TAG.INT,
-                  val: z_center
-                },
-                {
-                  name: 'colors',
-                  type: TAG.BYTEARRAY,
-                  val: map_item_array
-                }
-              ]
-            }
-          ]
-        };
-        var b;
-        try {
-          b = NbtWriter.writeTag(map_file);
-          var shasum = crypto.createHash('sha1');
-          shasum.update(b);
-          var filename = randomid + shasum.digest('hex');
-          tmp_files.addFile(filename + '.dat');
-          zlib.gzip(b, function(err, data) {
-            if (err) {
-              res.writeHead(500);
-              res.end("Internal server error");
-              console.log(myDate.getCurrent() + ' Error:');
-              console.log(err);
-            } else {
-              pool.acquire(function(err, client) {
-                if (err) {
-                  res.writeHead(500);
-                  res.end("Internal server error");
-                  console.log(myDate.getCurrent() + ' Error:');
-                  console.log(e);
-                } else {
-                  fs.writeFile('public/tmp/' + filename + '.dat', data, function(err) {
-                    if (!err) {
-                      console.log(myDate.getCurrent() + ' Map file written to disk: ' + filename + '.dat');
-                      res.setHeader('Content-Type', 'text/html');
-                      res.writeHead(200);
-                      res.end(filename);
-                      // res.end('<a href="tmp/' + filename + '.dat">Download</a>');
-                    } else {
-                      res.writeHead(500);
-                      res.end("Internal server error");
-                      console.log(err);
-                    }
-                    pool.release(client);
-                  });
-                }
-              });
-            }
-          });
-        } catch (e) {
-          // error with writing the file
-          res.writeHead(500);
-          res.end("Internal server error");
-          console.log(myDate.getCurrent() + ' Error:');
-          console.log(e);
-        }
-      } else {
-        console.log(myDate.getCurrent() + ' 400 Bad request');
-        res.writeHead(400);
-        res.end("Bad request");
-      }
-    } else if (req.method == 'POST' && req.url == '/createzip') {
-      var mapfiles, zipname;
-      try {
-        decodedBody = querystring.parse(body);
-        mapfiles = JSON.parse(decodedBody.mapfiles);
-        zipname = decodedBody.zipname;
-        mapnumber = parseInt(decodedBody.mapnumber, 10) || 0;
-        tmp_files.addFile(zipname + '.zip');
-        var output = fs.createWriteStream('public/tmp/' + zipname + '.zip');
-        var archive = archiver('zip');
-        output.on('close', function() {
-          console.log(myDate.getCurrent() + ' Zip file written to disk: ' + zipname + '.zip');
-          res.setHeader('Content-Type', 'text/html');
-          res.writeHead(200);
-          res.end(zipname);
-        });
-        archive.on('error', function(err) {
-          throw err;
-        });
-        archive.pipe(output);
-        var filenumber;
-        for (var j = 0; j < mapfiles.length; j++) {
-          if (!tmp_files.files[mapfiles[j] + '.dat']) {
-            throw new NotInTmpFilesException(mapfiles[j]);
-          }
-          filenumber = mapnumber + j;
-          addMapToZip(mapfiles[j], filenumber, archive);
-        }
-        archive.finalize(function(err, bytes) {
-          if (err) {
-            throw err;
-          }
-          console.log(myDate.getCurrent() + ' Zip file finalized: ' + bytes + ' total bytes');
-        });
-      } catch (e) {
-        error = true;
-        console.log(myDate.getCurrent() + ' Error: ' + e.toString());
-        res.writeHead(500);
-        res.end("Internal server error");
-      }
+function deleteTmpFiles (file) {
+  fs.unlink(`${TMP_DIR}${file}`, function (err) {
+    if (err) {
+      throw err;
     } else {
-      file.serve(req, res);
+      log(`Successfully deleted /tmp/${file}`);
     }
   });
 }
 
 function addMapToZip(filename, filenumber, archive) {
   pool.acquire(function(err, client) {
-    var readable = fs.createReadStream('public/tmp/' + filename + '.dat');
+    var readable = fs.createReadStream(`${TMP_DIR}${filename}.dat`);
     readable.on('end', function() {
       pool.release(client);
     });
-    archive.append(readable, { name: 'map_' + filenumber + '.dat' });
+    archive.append(readable, { name: `map_${filenumber}.dat` });
+  });
+}
+
+function NotInTmpFilesException(value) {
+  this.toString = (value) => `NotInTmpFilesException: ${value} is not in tmpFiles`;
+}
+
+var handlers = {
+  logReferer(req) {
+    var referer = req.headers.referer;
+    if (referer) {
+      if (referer.indexOf(req.headers.host) !== 7) {
+        log(`Referer: ${referer}`);
+      }
+    }
+  },
+  serveTmpFile(req, res) {
+    var url_parts = url.parse(req.url, true);
+    var {query, pathname} = url_parts;
+    if (tmpFiles.files[pathname.substr(5)]) {
+      try {
+        log(`Serve tmp file: ${pathname}`);
+        
+        let mapnumber = parseInt(query.mapnumber, 10) || 0;
+        let downloadfilename = pathname.slice(-3) == 'dat' ? `map_${mapnumber}.dat` : 'map_items.zip';
+        file.serveFile(pathname, 200,
+          {'Content-Disposition': `attachment; filename="${downloadfilename}"`}, req, res);
+      } catch (e) {
+        handlers.handleError(e, res);
+      }
+    } else {
+      res.writeHead(404);
+      res.end("File doesn't exist"); 
+    }
+  },
+  createMapFile(req, res, body) {
+    var map_item_array;
+    var x_center;
+    var z_center;
+    var dimension;
+    var randomid;
+    var error;
+    try {
+      let decodedBody = querystring.parse(body);
+      // log(JSON.stringify(decodedBody));
+      map_item_array = JSON.parse(decodedBody.map_item);
+      x_center = parseInt(decodedBody.x_center, 10);
+      z_center = parseInt(decodedBody.z_center, 10);
+      dimension = parseInt(decodedBody.dimension, 10);
+      randomid = decodedBody.randomid;
+      if (randomid !== "") {
+        randomid+= "_";
+      }
+      error = false;
+      // log(map_item_array.length);
+      if (map_item_array.length == 16384) {
+        for (let element of map_item_array.values()) {
+          if (element > 128) {
+            error = true;
+          }
+        }
+      } else {
+        error = true;
+      }
+    } catch (e) {
+      error = true;
+      handlers.handleError(e, res);
+    }
+    if (!error) {
+      var map_file = {
+        type: TAG.COMPOUND,
+        name: '',
+        val: [
+          {
+            name: 'data',
+            type: TAG.COMPOUND,
+            val: [
+              {
+                name: 'scale',
+                type: TAG.BYTE,
+                val: 0
+              },
+              {
+                name: 'dimension',
+                type: TAG.BYTE,
+                val: dimension
+              },
+              {
+                name: 'height',
+                type: TAG.SHORT,
+                val: 128
+              },
+              {
+                name: 'width',
+                type: TAG.SHORT,
+                val: 128
+              },
+              {
+                name: 'xCenter',
+                type: TAG.INT,
+                val: x_center
+              },
+              {
+                name: 'zCenter',
+                type: TAG.INT,
+                val: z_center
+              },
+              {
+                name: 'colors',
+                type: TAG.BYTEARRAY,
+                val: map_item_array
+              }
+            ]
+          }
+        ]
+      };
+      try {
+        let nbtData = NbtWriter.writeTag(map_file);
+        let shasum = crypto.createHash('sha1');
+        shasum.update(nbtData);
+        let filename = randomid + shasum.digest('hex');
+        tmpFiles.addFile(`${filename}.dat`);
+        zlib.gzip(nbtData, function(err, data) {
+          if (err) {
+            handlers.handleError(err, res);
+          } else {
+            pool.acquire(function(err, client) {
+              if (err) {
+                handlers.handleError(err, res);
+              } else {
+                fs.writeFile(`${TMP_DIR}${filename}.dat`, data, function(err) {
+                  if (!err) {
+                    log(`Map file written to disk: ${filename}.dat`);
+                    res.setHeader('Content-Type', 'text/html');
+                    res.writeHead(200);
+                    res.end(filename);
+                  } else {
+                    handlers.handleError(err, res);
+                  }
+                  pool.release(client);
+                });
+              }
+            });
+          }
+        });
+      } catch (e) {
+        // error with writing the file
+        handlers.handleError(e, res);
+      }
+    } else {
+      handlers.handleError(null, res, 400);
+    }
+  },
+  createZipFile(req, res, body) {
+    try {
+      let decodedBody = querystring.parse(body);
+      let mapfiles = JSON.parse(decodedBody.mapfiles);
+      let zipname = decodedBody.zipname;
+      let mapnumber = parseInt(decodedBody.mapnumber, 10) || 0;
+      tmpFiles.addFile(`${zipname}.zip`);
+      let output = fs.createWriteStream(`${TMP_DIR}${zipname}.zip`);
+      let archive = archiver('zip');
+      output.on('close', function() {
+        log(`Zip file written to disk: ${zipname}.zip`);
+        res.setHeader('Content-Type', 'text/html');
+        res.writeHead(200);
+        res.end(zipname);
+      });
+      archive.on('error', function(err) {
+        throw err;
+      });
+      archive.pipe(output);
+      let filenumber;
+      for (let [index, element] of mapfiles.entries()) {
+        if (!tmpFiles.files[`${element}.dat`]) {
+          throw new NotInTmpFilesException(element);
+        }
+        filenumber = mapnumber + index;
+        addMapToZip(element, filenumber, archive);
+      }
+      archive.finalize(function(err, bytes) {
+        if (err) {
+          throw err;
+        }
+        log(`Zip file finalized: ${bytes} total bytes`);
+      });
+    } catch (e) {
+      handlers.handleError(e, res);
+    }
+  },
+  handleError(err, res, statusCode=500) {
+    
+    res.writeHead(statusCode);
+    if (statusCode == 400) {
+      res.end("Bad request");
+      log('Bad request');
+    } else {
+      res.end("Internal server error");
+      log(`Error: ${err.toString()}`);
+    }
+  }
+};
+
+function handler (req, res) {
+  handlers.logReferer(req);
+
+  var body='';
+  req.on('data', function (data) {
+    body +=data;
+  });
+  req.addListener('end', function () {
+    if (req.method == 'GET' && req.url.substr(0, 4) == '/tmp') {
+      handlers.serveTmpFile(req, res);
+    } else if (req.method == 'POST' && req.url == '/createfile') {
+      handlers.createMapFile(req, res, body);
+    } else if (req.method == 'POST' && req.url == '/createzip') {
+      handlers.createZipFile(req, res, body);
+    } else {
+      file.serve(req, res);
+    }
   });
 }
 
@@ -302,28 +296,19 @@ var pool = poolModule.Pool({
   log : false
 });
 
-var myDate = {};
-
-myDate.getCurrent = function(timestamp) {
-  var d = new Date();
-  if (timestamp) {
-    d.setTime(timestamp);
+// on start delete all files in ./tmp
+fs.readdir('./public/tmp', function(err, files) {
+  if (err) {
+    throw err;
+  } else {
+    for (let file of files.values()) {
+      deleteTmpFiles(file);
+    }
   }
-  var hours = d.getHours();
-  hours = hours < 10 ? '0' + hours : hours;
-  var minutes = d.getMinutes();
-  minutes = minutes < 10 ? '0' + minutes : minutes;
-  var seconds = d.getSeconds();
-  seconds = seconds < 10 ? '0' + seconds : seconds;
-
-  var day = d.getDate();
-  day = day < 10 ? '0' + day : day;
-  var month = d.getMonth() + 1;
-  month = month < 10 ? '0' + month : month;
-  var year = d.getFullYear();
+});
 
 
-  return year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
-};
+var app = http.createServer(handler);
+app.listen(process.env.PORT || 8080, process.env.HOST);
 
-console.log(myDate.getCurrent() + ' Started mc-map-item-tool server');
+log('Started mc-map-item-tool server');
