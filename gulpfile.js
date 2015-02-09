@@ -7,7 +7,7 @@ var to5 = require("gulp-6to5");
 var DEST_CLIENT = 'public/';
 var DEST_SERVER = 'lib/';
 
-gulp.task('default', function() {
+gulp.task('default', ['clean'], function() {
   var client = gulp.src('src/client/*')
     .pipe(gulp.dest(DEST_CLIENT));
   var vendor = gulp.src('vendor/**')
@@ -30,4 +30,14 @@ gulp.task('clean', function(cb) {
     'public/*',
     'lib/*'
   ], cb);
+});
+
+gulp.task('test:server', ['default'], function() {
+  var mocha = require('gulp-mocha');
+
+  return gulp.src('tests/mocha/test-server.js', {read: false})
+    .pipe(mocha({reporter: 'spec'}))
+    .once('end', function () {
+      process.exit();
+    });
 });

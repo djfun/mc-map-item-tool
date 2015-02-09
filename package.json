@@ -7,7 +7,8 @@
     "test": "gulp && casperjs test tests/yadda/main_test.js && gulp clean",
     "start": "gulp && node lib/server.js",
     "build": "gulp",
-    "clean": "gulp clean"
+    "clean": "gulp clean",
+    "test:server": "gulp test:server"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,9 @@
   "devDependencies": {
     "async": "^0.2.10",
     "casperjs": "^1.1.0-beta3",
+    "chai": "^1.10.0",
+    "gulp-mocha": "^2.0.0",
+    "mocha": "^2.1.0",
     "phantomjs": "^1.9.12",
     "yadda": "^0.11.2"
   },

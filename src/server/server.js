@@ -28,8 +28,8 @@ var tmpFiles = {
   },
   removeOldFiles() {
     var time = (new Date()).getTime();
-    for (let [hash, fileTime] of this.files.entries()) {
-      if (fileTime < time - (30 * 60 * 1000)) {
+    for (let hash in this.files) {
+      if (this.files[hash] < time - (30 * 60 * 1000)) {
         deleteTmpFiles(hash);
         delete this.files[hash];
       }
@@ -37,6 +37,22 @@ var tmpFiles = {
   },
   files: {}
 };
+
+var pool = poolModule.Pool({
+  name     : 'readwritefile',
+  create   : function(callback) {
+    var resource = {};
+    callback(null, resource);
+  },
+  destroy  : function(client) { },
+  max      : 50,
+  // specifies how long a resource can stay idle in pool before being removed
+  idleTimeoutMillis : 30000,
+   // if true, logs via console.log - can also be a function
+  log : false
+});
+
+var app;
 
 function log(message) {
   console.log(`${moment().format('YYYY-MM-DD HH:mm:ss')} ${message}`);
@@ -63,7 +79,8 @@ function addMapToZip(filename, filenumber, archive) {
 }
 
 function NotInTmpFilesException(value) {
-  this.toString = (value) => `NotInTmpFilesException: ${value} is not in tmpFiles`;
+  this.filename = value;
+  this.toString = () => `NotInTmpFilesException: ${this.filename} is not in tmpFiles`;
 }
 
 var handlers = {
@@ -282,33 +299,26 @@ function handler (req, res) {
   });
 }
 
-var pool = poolModule.Pool({
-  name     : 'readwritefile',
-  create   : function(callback) {
-    var resource = {};
-    callback(null, resource);
-  },
-  destroy  : function(client) { },
-  max      : 50,
-  // specifies how long a resource can stay idle in pool before being removed
-  idleTimeoutMillis : 30000,
-   // if true, logs via console.log - can also be a function
-  log : false
-});
-
-// on start delete all files in ./tmp
-fs.readdir('./public/tmp', function(err, files) {
-  if (err) {
-    throw err;
-  } else {
-    for (let file of files.values()) {
-      deleteTmpFiles(file);
+function startup() {
+  // on start delete all files in ./tmp
+  fs.readdir('./public/tmp', function(err, files) {
+    if (err) {
+      throw err;
+    } else {
+      for (let file of files.values()) {
+        deleteTmpFiles(file);
+      }
     }
-  }
-});
+  });
 
+  app = http.createServer(handler);
+  app.listen(process.env.PORT || 8080, process.env.HOST);
+  log('Started mc-map-item-tool server');
+}
 
-var app = http.createServer(handler);
-app.listen(process.env.PORT || 8080, process.env.HOST);
-
-log('Started mc-map-item-tool server');
+if (!module.parent) {
+  startup();  
+} else {
+  module.exports.handler = handler;
+  module.exports.tmpFiles = tmpFiles;
+}
