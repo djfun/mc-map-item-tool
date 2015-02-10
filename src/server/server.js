@@ -11,8 +11,8 @@ var nodeStatic = require('node-static');
 var querystring = require('querystring');
 var crypto = require('crypto');
 var archiver = require('archiver');
-var poolModule = require('generic-pool');
 var moment = require('moment');
+var lazystream = require('lazystream');
 
 var file = new (nodeStatic.Server)('./public');
 var TAG = require('node-nbt').TAG;
@@ -38,20 +38,6 @@ var tmpFiles = {
   files: {}
 };
 
-var pool = poolModule.Pool({
-  name     : 'readwritefile',
-  create   : function(callback) {
-    var resource = {};
-    callback(null, resource);
-  },
-  destroy  : function(client) { },
-  max      : 50,
-  // specifies how long a resource can stay idle in pool before being removed
-  idleTimeoutMillis : 30000,
-   // if true, logs via console.log - can also be a function
-  log : false
-});
-
 var app;
 
 function log(message) {
@@ -61,26 +47,14 @@ function log(message) {
 function deleteTmpFiles (file) {
   fs.unlink(`${TMP_DIR}${file}`, function (err) {
     if (err) {
-      throw err;
+      let error = new Error('Error while deleting tmp files');
+      error.http_code = 500;
+      error.fs_error = err;
+      throw error;
     } else {
       log(`Successfully deleted /tmp/${file}`);
     }
   });
-}
-
-function addMapToZip(filename, filenumber, archive) {
-  pool.acquire(function(err, client) {
-    var readable = fs.createReadStream(`${TMP_DIR}${filename}.dat`);
-    readable.on('end', function() {
-      pool.release(client);
-    });
-    archive.append(readable, { name: `map_${filenumber}.dat` });
-  });
-}
-
-function NotInTmpFilesException(value) {
-  this.filename = value;
-  this.toString = () => `NotInTmpFilesException: ${this.filename} is not in tmpFiles`;
 }
 
 var handlers = {
@@ -108,7 +82,7 @@ var handlers = {
       }
     } else {
       res.writeHead(404);
-      res.end("File doesn't exist"); 
+      res.end("File doesn't exist");
     }
   },
   createMapFile(req, res, body) {
@@ -117,7 +91,6 @@ var handlers = {
     var z_center;
     var dimension;
     var randomid;
-    var error;
     try {
       let decodedBody = querystring.parse(body);
       // log(JSON.stringify(decodedBody));
@@ -129,22 +102,20 @@ var handlers = {
       if (randomid !== "") {
         randomid+= "_";
       }
-      error = false;
       // log(map_item_array.length);
       if (map_item_array.length == 16384) {
         for (let element of map_item_array.values()) {
-          if (element > 128) {
-            error = true;
+          if (element > 127) {
+            let error = new Error('Illegal color value in map_item_array');
+            error.http_code = 400;
+            throw error;
           }
         }
       } else {
-        error = true;
+        let error = new Error('Illegal length of map_item_array');
+        error.http_code = 400;
+        throw error;
       }
-    } catch (e) {
-      error = true;
-      handlers.handleError(e, res);
-    }
-    if (!error) {
       var map_file = {
         type: TAG.COMPOUND,
         name: '',
@@ -192,41 +163,32 @@ var handlers = {
           }
         ]
       };
-      try {
-        let nbtData = NbtWriter.writeTag(map_file);
-        let shasum = crypto.createHash('sha1');
-        shasum.update(nbtData);
-        let filename = randomid + shasum.digest('hex');
-        tmpFiles.addFile(`${filename}.dat`);
-        zlib.gzip(nbtData, function(err, data) {
-          if (err) {
-            handlers.handleError(err, res);
-          } else {
-            pool.acquire(function(err, client) {
-              if (err) {
-                handlers.handleError(err, res);
-              } else {
-                fs.writeFile(`${TMP_DIR}${filename}.dat`, data, function(err) {
-                  if (!err) {
-                    log(`Map file written to disk: ${filename}.dat`);
-                    res.setHeader('Content-Type', 'text/html');
-                    res.writeHead(200);
-                    res.end(filename);
-                  } else {
-                    handlers.handleError(err, res);
-                  }
-                  pool.release(client);
-                });
-              }
+      let nbtData = NbtWriter.writeTag(map_file);
+      let shasum = crypto.createHash('sha1');
+      shasum.update(nbtData);
+      let filename = randomid + shasum.digest('hex');
+      tmpFiles.addFile(`${filename}.dat`);
+      zlib.gzip(nbtData, function(err, data) {
+        if (err) {
+          let error = new Error('Error while creating map file');
+          error.http_code = 500;
+          error.zlib_error = err;
+          throw error;
+        }
+        let writeStream = new lazystream.Writable(function () {
+          return fs.createWriteStream(`${TMP_DIR}${filename}.dat`)
+            .on('close', function () {
+              log(`Map file written to disk: ${filename}.dat`);
+              res.setHeader('Content-Type', 'text/html');
+              res.writeHead(200);
+              res.end(filename);
             });
-          }
         });
-      } catch (e) {
-        // error with writing the file
-        handlers.handleError(e, res);
-      }
-    } else {
-      handlers.handleError(null, res, 400);
+        writeStream.write(data);
+        writeStream.end();
+      });
+    } catch (e) {
+      handlers.handleError(e, res);
     }
   },
   createZipFile(req, res, body) {
@@ -245,20 +207,28 @@ var handlers = {
         res.end(zipname);
       });
       archive.on('error', function(err) {
-        throw err;
+        let error = new Error('Error while creating zip archive');
+        error.http_code = 500;
+        error.archive_error = err;
+        throw error;
       });
       archive.pipe(output);
       let filenumber;
       for (let [index, element] of mapfiles.entries()) {
         if (!tmpFiles.files[`${element}.dat`]) {
-          throw new NotInTmpFilesException(element);
+          let error = new Error(`NotInTmpFilesException: ${element} is not in tmpFiles`);
+          error.http_code = 500;
+          throw error;
         }
         filenumber = mapnumber + index;
-        addMapToZip(element, filenumber, archive);
+        archive.file(`${TMP_DIR}${element}.dat`, {name: `map_${filenumber}.dat`});
       }
       archive.finalize(function(err, bytes) {
         if (err) {
-          throw err;
+          let error = new Error('Error while finalizing zip archive');
+          error.http_code = 500;
+          error.archive_error = err;
+          throw error;
         }
         log(`Zip file finalized: ${bytes} total bytes`);
       });
@@ -266,15 +236,16 @@ var handlers = {
       handlers.handleError(e, res);
     }
   },
-  handleError(err, res, statusCode=500) {
+  handleError(err, res) {
     
-    res.writeHead(statusCode);
-    if (statusCode == 400) {
+    res.writeHead(err.http_code || 500);
+    if (err.http_code == 400) {
       res.end("Bad request");
       log('Bad request');
+      log(err.toString());
     } else {
       res.end("Internal server error");
-      log(`Error: ${err.toString()}`);
+      log(err.toString());
     }
   }
 };
@@ -317,7 +288,7 @@ function startup() {
 }
 
 if (!module.parent) {
-  startup();  
+  startup();
 } else {
   module.exports.handler = handler;
   module.exports.tmpFiles = tmpFiles;

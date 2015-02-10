@@ -39,6 +39,7 @@
     "generic-pool": "^2.1.1",
     "gulp": "^3.8.10",
     "gulp-6to5": "^3.0.0",
+    "lazystream": "^0.1.0",
     "merge-stream": "^0.1.7",
     "mkdirp": "^0.5.0",
     "moment": "^2.9.0",

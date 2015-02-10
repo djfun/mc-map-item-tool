@@ -84,12 +84,40 @@ describe('Server', function() {
     });
   });
 
-  it.skip('should handle zip creation when the number of maps is greater than the file handle limit', function(done) {
-
+  it('should handle zip creation when the number of maps is greater than the file handle limit', function(done) {
+    this.timeout(0);
+    tmpFiles.addFile("map_0_name.dat");
+    var mapfiles = [];
+    for (var i = 0; i<1030; i++) {
+      mapfiles.push("map_0_name");
+    }
+    var postData = {
+      mapfiles: JSON.stringify(mapfiles),
+      zipname: "test_zip_name_1",
+      mapnumber: "0"
+    };
+    doPostRequest('/createzip', postData, function(res, body) {
+      expect(res.statusCode).to.equal(200);
+      expect(body).to.equal('test_zip_name_1');
+      done();
+    });
   });
 
-  it.skip('should handle irregular inputs and return an error', function(done) {
-
+  it('should handle irregular inputs and return a 400 error', function(done) {
+    var mapitem = fs.readFileSync('tests/mocha/data/mapitem.json', {encoding: 'utf8'});
+    mapitem = JSON.parse(mapitem);
+    mapitem[50] = 128;
+    var map = {
+      map_item: JSON.stringify(mapitem),
+      x_center: "0",
+      z_center: "0",
+      dimension: "0",
+      randomid: ""
+    };
+    doPostRequest('/createfile', map, function(res, body) {
+      expect(res.statusCode).to.equal(400);
+      done();
+    });
   });
 
   after(function(done) {
