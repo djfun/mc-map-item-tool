@@ -40,4 +40,13 @@ gulp.task('test:server', ['default'], function() {
     .once('end', function () {
       process.exit();
     });
-});
+}, ['clean']);
+
+gulp.task('test:client', ['default'], function() {
+  var casperJs = require('gulp-casperjs');
+
+  return gulp.src('tests/yadda/main_test.js')
+    .pipe(casperJs()); //run casperjs test
+}, ['clean']);
+
+gulp.task('test', ['test:server', 'test:client']);

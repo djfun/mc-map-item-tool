@@ -4,11 +4,12 @@
   "description": "web tool for converting images to minecraft maps",
   "main": "lib/server.js",
   "scripts": {
-    "test": "gulp && casperjs test tests/yadda/main_test.js && gulp clean",
+    "test": "gulp test",
     "start": "gulp && node lib/server.js",
     "build": "gulp",
     "clean": "gulp clean",
-    "test:server": "gulp test:server"
+    "test:server": "gulp test:server",
+    "test:client": "gulp test:client"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,7 @@
     "async": "^0.2.10",
     "casperjs": "^1.1.0-beta3",
     "chai": "^1.10.0",
+    "gulp-casperjs": "0.0.5",
     "gulp-mocha": "^2.0.0",
     "mocha": "^2.1.0",
     "phantomjs": "^1.9.12",

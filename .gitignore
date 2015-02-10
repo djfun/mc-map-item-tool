@@ -18,6 +18,7 @@ node_modules/mocha
 node_modules/chai
 node_modules/gulp-mocha
 node_modules/lazystream
+node_modules/gulp-casperjs
 assets/html/google*
 public/*
 lib/*
