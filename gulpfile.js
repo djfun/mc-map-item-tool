@@ -3,6 +3,9 @@ var del = require('del');
 var merge = require('merge-stream');
 var mkdirp = require('mkdirp');
 var to5 = require("gulp-6to5");
+var requireDir = require('require-dir');
+var dir = requireDir('./tasks');
+
 
 var DEST_CLIENT = 'public/';
 var DEST_SERVER = 'lib/';

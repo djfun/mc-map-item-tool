@@ -19,6 +19,8 @@ node_modules/chai
 node_modules/gulp-mocha
 node_modules/lazystream
 node_modules/gulp-casperjs
+node_modules/gulp-shell
+node_modules/require-dir
 assets/html/google*
 public/*
 lib/*

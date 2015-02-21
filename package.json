@@ -46,6 +46,7 @@
     "mkdirp": "^0.5.0",
     "moment": "^2.9.0",
     "node-nbt": "^1.0.0",
-    "node-static": "^0.7.6"
+    "node-static": "^0.7.6",
+    "require-dir": "^0.1.0"
   }
 }
