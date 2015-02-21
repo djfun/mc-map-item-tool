@@ -1,6 +1,6 @@
 "use strict";
 
-require("6to5/polyfill");
+require("babel/polyfill");
 
 var zlib = require('zlib');
 var url = require('url');
