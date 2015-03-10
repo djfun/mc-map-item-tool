@@ -4,6 +4,9 @@ var merge = require('merge-stream');
 var mkdirp = require('mkdirp');
 var to5 = require("gulp-babel");
 var requireDir = require('require-dir');
+
+mkdirp.sync('tasks');
+
 var dir = requireDir('./tasks');
 
 
