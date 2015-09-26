@@ -205,7 +205,8 @@ function reducecolors(ev) {
   worker.postMessage({pixelData: pixelData,
     new_colors: Cookies.get('newColors') || 'yes',
     colourSpace: Cookies.get('colourSpace') || 'laba',
-    dithering: Cookies.get('dithering') || 'no'
+    dithering: Cookies.get('dithering') || 'no',
+    transparency: Cookies.get('transparency') || '50'
   });
 
   var time_start = new Date();

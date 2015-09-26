@@ -9,6 +9,7 @@ onmessage = function (oEvent) {
   var pixelData = oEvent.data.pixelData;
   colourSpace = oEvent.data.colourSpace;
   dithering = oEvent.data.dithering;
+  transparencyThreshold = parseInt(oEvent.data.transparency, 10);
 
   all_maps_data = [];
   var index;
@@ -71,7 +72,7 @@ function reduce_colors_map(a, b, c, d, pixelData) {
     }
   }
 
-  if (pixelData.data[d] < 50) {
+  if (pixelData.data[d] < transparencyThreshold) {
     closestColorIndex = 0;
   }
 

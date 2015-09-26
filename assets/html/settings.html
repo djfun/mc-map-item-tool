@@ -2,6 +2,7 @@
 <head>
   <title>MC Map Item Tool</title>
   <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+  <link href="css/bootstrap-slider.min.css" rel="stylesheet" media="screen">
   <link href="css/main.css" rel="stylesheet" media="screen">
   <meta name=viewport content="width=device-width, initial-scale=1">
 </head>
@@ -62,6 +63,17 @@
           </div>
         </div>
         <div class="form-group">
+          <label for="transparency" class="col-sm-3 control-label">Transparency threshold</label>
+          <div class="col-sm-9">
+            <div class="col-xs-10" style="padding-left:0px">
+              <input type="range" id="transparency" class="form-control" name="transparency" value="50" min="0" max="255" />
+            </div>
+            <div class="col-xs-2" style="padding-right:0px">
+              <input type="text" id="transparency_label" class="form-control" readonly="true" />
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
           <label for="x_center" class="col-sm-3 control-label">X center</label>
           <div class="col-sm-9">
             <input type="text" class="form-control" id="x_center" name="x_center" value="0" />
@@ -93,6 +105,7 @@
   </div>
   <script src="js/jquery-1.10.2.min.js"></script>
   <script src="js/bootstrap.min.js"></script>
+  <script src="js/bootstrap-slider.min.js"></script>
   <script src="js/cookies.min.js"></script>
   <script src="settings.js"></script>
 </body>

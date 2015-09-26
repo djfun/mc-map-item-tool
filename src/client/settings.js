@@ -8,6 +8,7 @@ $(document).ready(function() {
   var newColors = Cookies.get('newColors') || 'yes';
   var dithering = Cookies.get('dithering') || 'no';
   var interpolation = Cookies.get('interpolation') || 'standard';
+  var transparency = Cookies.get('transparency') || '50';
 
   $('#colorSpace').val(colourSpace);
   $('#x_center').val(xcenter);
@@ -16,6 +17,12 @@ $(document).ready(function() {
   $('#newColors').val(newColors);
   $('#dithering').val(dithering);
   $('#interpolation').val(interpolation);
+  $('#transparency').val(transparency);
+  $('#transparency_label').val(transparency + '/255');
+
+  $('#transparency').on("input change", function() {
+    $('#transparency_label').val($('#transparency').val() + '/255');
+  });
 });
 
 function savesettings(event) {
@@ -26,6 +33,7 @@ function savesettings(event) {
   var newColors = $('#newColors').val();
   var dithering = $('#dithering').val();
   var interpolation = $('#interpolation').val();
+  var transparency = $('#transparency').val();
   Cookies.set('colourSpace', colourSpace);
   Cookies.set('xcenter', xcenter);
   Cookies.set('zcenter', zcenter);
@@ -33,4 +41,5 @@ function savesettings(event) {
   Cookies.set('newColors', newColors);
   Cookies.set('dithering', dithering);
   Cookies.set('interpolation', interpolation);
+  Cookies.set('transparency', transparency);
 }
