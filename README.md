@@ -3,7 +3,7 @@ mc-map-item-tool [![Build Status](https://travis-ci.org/djfun/mc-map-item-tool.p
 
 [nodejs](http://nodejs.org) webtool for converting images to Minecraft map items.
 
-Other code/libraries used: [jquery](http://jquery.com/), [bootstrap](http://twitter.github.com/bootstrap/), [Colour.js](http://stevehanov.ca/blog/index.php?id=116), [cookies.js](https://github.com/ScottHamper/Cookies), [node-nbt](https://github.com/djfun/node-nbt), [archiver](https://github.com/ctalkington/node-archiver), [babel](https://github.com/babel/babel), [lazystream](https://github.com/jpommerening/node-lazystream), [moment](https://github.com/moment/moment), [node-static](https://github.com/cloudhead/node-static)
+Other code/libraries used: [jquery](http://jquery.com/), [bootstrap](http://twitter.github.com/bootstrap/), [Colour.js](http://stevehanov.ca/blog/index.php?id=116), [cookies.js](https://github.com/ScottHamper/Cookies), [node-nbt](https://github.com/djfun/node-nbt), [archiver](https://github.com/ctalkington/node-archiver), [babel](https://github.com/babel/babel), [lazystream](https://github.com/jpommerening/node-lazystream), [moment](https://github.com/moment/moment), [node-static](https://github.com/cloudhead/node-static), [winston](https://github.com/winstonjs/winston)
 
 How to setup and run your own server
 ------------------------------------

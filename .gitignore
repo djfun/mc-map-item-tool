@@ -20,6 +20,8 @@ node_modules/lazystream
 node_modules/gulp-casperjs
 node_modules/gulp-shell
 node_modules/require-dir
+node_modules/winston
 assets/html/google*
 public/*
 lib/*
+log/*

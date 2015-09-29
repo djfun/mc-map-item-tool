@@ -13,11 +13,30 @@ var crypto = require('crypto');
 var archiver = require('archiver');
 var moment = require('moment');
 var lazystream = require('lazystream');
+var winston = require('winston');
 
 var file = new (nodeStatic.Server)('./public');
 var TAG = require('node-nbt').TAG;
 var NbtReader = require('node-nbt').NbtReader;
 var NbtWriter = require('node-nbt').NbtWriter;
+
+winston.remove(winston.transports.Console);
+winston.add(winston.transports.File, {
+  filename: './log/mc-map.log',
+  handleExceptions: true,
+  json: false,
+  maxsize: 99999,
+  timestamp: function() { return moment().format('YYYY-MM-DD HH:mm:ss'); }
+});
+if (process.env.NODE_ENV != 'production') {
+  winston.add(winston.transports.Console, {
+    handleExceptions: true,
+    json: false,
+    timestamp: function() { return moment().format('YYYY-MM-DD HH:mm:ss'); },
+    colorize: true,
+    stringify: true
+  });
+}
 
 var TMP_DIR = './public/tmp/';
 
@@ -40,10 +59,6 @@ var tmpFiles = {
 
 var app;
 
-function log(message) {
-  console.log(`${moment().format('YYYY-MM-DD HH:mm:ss')} ${message}`);
-}
-
 function deleteTmpFiles (file) {
   fs.unlink(`${TMP_DIR}${file}`, function (err) {
     if (err) {
@@ -52,7 +67,7 @@ function deleteTmpFiles (file) {
       error.fs_error = err;
       throw error;
     } else {
-      log(`Successfully deleted /tmp/${file}`);
+      winston.log('info', `Successfully deleted /tmp/${file}`);
     }
   });
 }
@@ -61,8 +76,10 @@ var handlers = {
   logReferer(req) {
     var referer = req.headers.referer;
     if (referer) {
-      if (referer.indexOf(req.headers.host) !== 7) {
-        log(`Referer: ${referer}`);
+      var host = req.headers['x-forwarded-host'] ? req.headers['x-forwarded-host'] : req.headers.host;
+      if (referer.indexOf(host) !== 7) {
+        // only log external referers
+        winston.log('info', `Referer: ${referer}`);
       }
     }
   },
@@ -71,7 +88,7 @@ var handlers = {
     var {query, pathname} = url_parts;
     if (tmpFiles.files[pathname.substr(5)]) {
       try {
-        log(`Serve tmp file: ${pathname}`);
+        winston.log('info', `Serve tmp file: ${pathname}`);
         
         let mapnumber = parseInt(query.mapnumber, 10) || 0;
         let downloadfilename = pathname.slice(-3) == 'dat' ? `map_${mapnumber}.dat` : 'map_items.zip';
@@ -93,7 +110,7 @@ var handlers = {
     var randomid;
     try {
       let decodedBody = querystring.parse(body);
-      // log(JSON.stringify(decodedBody));
+      winston.log('debug', 'decoded body', decodedBody);
       map_item_array = JSON.parse(decodedBody.map_item);
       x_center = parseInt(decodedBody.x_center, 10);
       z_center = parseInt(decodedBody.z_center, 10);
@@ -102,7 +119,7 @@ var handlers = {
       if (randomid !== "") {
         randomid+= "_";
       }
-      // log(map_item_array.length);
+      winston.log('debug', 'array length', map_item_array.length);
       if (map_item_array.length == 16384) {
         for (let element of map_item_array.values()) {
           if (element > 127) {
@@ -178,7 +195,7 @@ var handlers = {
         let writeStream = new lazystream.Writable(function () {
           return fs.createWriteStream(`${TMP_DIR}${filename}.dat`)
             .on('close', function () {
-              log(`Map file written to disk: ${filename}.dat`);
+              winston.log('info', `Map file written to disk: ${filename}.dat`);
               res.setHeader('Content-Type', 'text/html');
               res.writeHead(200);
               res.end(filename);
@@ -201,7 +218,7 @@ var handlers = {
       let output = fs.createWriteStream(`${TMP_DIR}${zipname}.zip`);
       let archive = archiver('zip');
       output.on('close', function() {
-        log(`Zip file written to disk: ${zipname}.zip`);
+        winston.log('info', `Zip file written to disk: ${zipname}.zip`);
         res.setHeader('Content-Type', 'text/html');
         res.writeHead(200);
         res.end(zipname);
@@ -230,7 +247,7 @@ var handlers = {
           error.archive_error = err;
           throw error;
         }
-        log(`Zip file finalized: ${bytes} total bytes`);
+        winston.log('info', `Zip file finalized: ${bytes} total bytes`);
       });
     } catch (e) {
       handlers.handleError(e, res);
@@ -241,11 +258,10 @@ var handlers = {
     res.writeHead(err.http_code || 500);
     if (err.http_code == 400) {
       res.end("Bad request");
-      log('Bad request');
-      log(err.toString());
+      winston.log('info', 'Bad request', err.toString());
     } else {
       res.end("Internal server error");
-      log(err.toString());
+      winston.log('info', 'Internal Server Error', err.toString());
     }
   }
 };
@@ -284,8 +300,14 @@ function startup() {
 
   app = http.createServer(handler);
   app.listen(process.env.PORT || 8080, process.env.HOST);
-  log('Started mc-map-item-tool server');
+  winston.log('info', 'Started mc-map-item-tool server');
 }
+
+process.on("SIGTERM", function() {
+  winston.log('info', 'Received signal SIGTERM');
+  process.exit();
+});
+
 
 if (!module.parent) {
   startup();

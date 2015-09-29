@@ -27,6 +27,7 @@ gulp.task('default', ['clean'], function() {
     .pipe(gulp.dest(DEST_SERVER));
 
   mkdirp.sync('public/tmp');
+  mkdirp.sync('log');
 
   return merge(client, vendor, assets, assets_html, server);
 });

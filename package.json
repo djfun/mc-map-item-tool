@@ -1,6 +1,6 @@
 {
   "name": "minecraft-map-item-tool",
-  "version": "1.6.0",
+  "version": "1.7.0",
   "description": "web tool for converting images to minecraft maps",
   "main": "lib/server.js",
   "scripts": {
@@ -46,6 +46,7 @@
     "lazystream": "^0.1.0",
     "moment": "^2.9.0",
     "node-nbt": "^1.0.0",
-    "node-static": "^0.7.6"
+    "node-static": "^0.7.6",
+    "winston": "^1.0.2"
   }
 }
