@@ -1,6 +1,6 @@
 {
   "name": "minecraft-map-item-tool",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "web tool for converting images to minecraft maps",
   "main": "lib/server.js",
   "scripts": {

@@ -43,10 +43,7 @@ gulp.task('test:server', ['default'], function() {
   var mocha = require('gulp-mocha');
 
   return gulp.src('tests/mocha/test-server.js', {read: false})
-    .pipe(mocha({reporter: 'spec'}))
-    .once('end', function () {
-      process.exit();
-    });
+    .pipe(mocha({reporter: 'spec'}));
 }, ['clean']);
 
 gulp.task('test:client', ['default'], function() {
