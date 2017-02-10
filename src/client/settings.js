@@ -5,7 +5,7 @@ $(document).ready(function() {
   var xcenter = Cookies.get('xcenter') || '0';
   var zcenter = Cookies.get('zcenter') || '0';
   var dim = Cookies.get('dimension') || '0';
-  var newColors = Cookies.get('newColors') || 'yes';
+  var newColors = Cookies.get('newColors') || '181';
   var dithering = Cookies.get('dithering') || 'no';
   var interpolation = Cookies.get('interpolation') || 'standard';
   var transparency = Cookies.get('transparency') || '50';

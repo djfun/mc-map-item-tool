@@ -203,7 +203,7 @@ function reducecolors(ev) {
   var worker = new Worker("reduce_colors_worker.js");
 
   worker.postMessage({pixelData: pixelData,
-    new_colors: Cookies.get('newColors') || 'yes',
+    new_colors: Cookies.get('newColors') || '181',
     colourSpace: Cookies.get('colourSpace') || 'laba',
     dithering: Cookies.get('dithering') || 'no',
     transparency: Cookies.get('transparency') || '50'
@@ -421,7 +421,8 @@ function list_settings() {
   var colorSchemeToText = {
     'no': 'Old colors',
     'yes': 'Version 1.7.2 (2013)',
-    '181': 'Version 1.8.1 (2014)'
+    '181': 'Version 1.8.1 (2014)',
+    '17w06a': 'Snapshot 17w06a'
   };
   var dimensionToText = {
     '0': 'Overworld',
