@@ -22,31 +22,41 @@
   },
   "homepage": "https://github.com/djfun/mc-map-item-tool",
   "engines": {
-    "node": ">= 0.10.0"
+    "node": ">=6.11.2"
   },
   "devDependencies": {
-    "async": "^0.2.10",
+    "async": "^2.5.0",
+    "babel-cli": "^6.24.1",
     "casperjs": "^1.1.0-beta3",
-    "chai": "^1.10.0",
-    "del": "^1.1.1",
+    "chai": "^4.1.1",
+    "del": "^3.0.0",
     "gulp": "^3.8.10",
-    "gulp-babel": "^4.0.0",
-    "gulp-casperjs": "0.0.5",
-    "gulp-mocha": "^2.0.0",
-    "merge-stream": "^0.1.7",
+    "gulp-babel": "^7.0.0",
+    "gulp-casperjs": "0.0.6",
+    "gulp-mocha": "^4.3.1",
+    "merge-stream": "^1.0.1",
     "mkdirp": "^0.5.0",
-    "mocha": "^2.1.0",
-    "phantomjs": "^1.9.12",
-    "require-dir": "^0.1.0",
-    "yadda": "^0.11.2"
+    "mocha": "^3.5.0",
+    "phantomjs": "^2.1.7",
+    "require-dir": "^0.3.2",
+    "yadda": "^1.4.0"
   },
   "dependencies": {
-    "archiver": "^0.14.2",
-    "babel": "^4.4.3",
-    "lazystream": "^0.1.0",
-    "moment": "^2.9.0",
+    "archiver": "^2.0.0",
+    "babel-polyfill": "^6.23.0",
+    "casperjs": "^1.1.4",
+    "del": "^1.2.1",
+    "gulp-babel": "^4.0.1",
+    "gulp-mocha": "^2.2.0",
+    "lazystream": "^1.0.0",
+    "merge-stream": "^0.1.8",
+    "mkdirp": "^0.5.1",
+    "mocha": "^2.5.3",
+    "moment": "^2.18.1",
     "node-nbt": "^1.0.0",
-    "node-static": "^0.7.6",
-    "winston": "^1.0.2"
+    "node-static": "^0.7.9",
+    "phantomjs": "^1.9.20",
+    "winston": "^2.3.1",
+    "yadda": "^0.11.7"
   }
 }

@@ -1,5 +1,5 @@
 var fs = require('fs');
-var async = require(fs.workingDirectory + '/node_modules/async/lib/async');
+var async = require(fs.workingDirectory + '/node_modules/async/dist/async');
 var Yadda = require(fs.workingDirectory + '/node_modules/yadda/lib/index');
 var xpath = require('casper').selectXPath;
 
