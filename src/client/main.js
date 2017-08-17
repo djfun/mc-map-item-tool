@@ -98,17 +98,10 @@ function selectnumber(ev) {
   canvas_full.style.height = canvas_full.height * 2;
 
   if (interpolation == 'nearest_neighbor') {
-    ctx_full.mozImageSmoothingEnabled = false;
-    ctx_full.webkitImageSmoothingEnabled = false;
-    ctx_full.msImageSmoothingEnabled = false;
     ctx_full.imageSmoothingEnabled = false;
   } else {
-    ctx_full.mozImageSmoothingEnabled = true;
-    ctx_full.webkitImageSmoothingEnabled = true;
-    ctx_full.msImageSmoothingEnabled = true;
     ctx_full.imageSmoothingEnabled = true;
   }
-
   ctx_full.drawImage(canvasCopy, 0, 0,
     canvasCopy.width, canvasCopy.height,
     spaceW, spaceH, img.width * ratio, img.height * ratio);
@@ -123,7 +116,6 @@ function selectnumber(ev) {
   } else {
     ctx_full_scaled.drawImage(canvas_full, 0, 0, 256 * selected_ratio, 256);
   }
-
 
   // draw scaled version of ctx_full onto canvas#canvas_full_scaled
   // add part selection to span#list_settings
