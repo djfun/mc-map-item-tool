@@ -1,5 +1,5 @@
 var fs = require('fs');
-var async = require(fs.workingDirectory + '/node_modules/async/lib/async');
+var async = require(fs.workingDirectory + '/node_modules/async/dist/async');
 var Yadda = require(fs.workingDirectory + '/node_modules/yadda/lib/index');
 var xpath = require('casper').selectXPath;
 
@@ -13,6 +13,17 @@ Yadda.plugins.casper(yadda, casper);
 new Yadda.FeatureFileSearch(fs.workingDirectory + '/tests/yadda/features').each(function(file) {
   console.log(file);
     var feature = parser.parse(fs.read(file));
+
+// casper.options.verbose = true;
+// casper.options.logLevel ="debug";
+
+casper.on('remote.message', function(message) {
+    this.echo(message);
+});
+
+casper.on("page.error", function(msg, trace) {
+     this.echo("Error: " + msg, "ERROR");
+});
 
     casper.test.begin(feature.title, function suite(test) {
         async.eachSeries(feature.scenarios, function(scenario, next) {

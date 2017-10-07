@@ -56,10 +56,10 @@ module.exports.init = function() {
     })
     .when("I select $NUM horizontal and $NUM vertical part", function(horizontal, vertical) {
       casper.waitUntilVisible('.step-2', function() {
-        casper.fill('form', {
-          'width_horizontal': horizontal,
-          'width_vertical': vertical
-        }, false);
+        casper.evaluate(function(horizontal, vertical) {
+          $('#width_horizontal').val(horizontal).change();
+          $('#width_vertical').val(vertical).change();
+        });
 
         casper.click("#selectnumberofparts");
       });
