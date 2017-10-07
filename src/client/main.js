@@ -414,7 +414,8 @@ function list_settings() {
     'no': 'Old colors',
     'yes': 'Version 1.7.2 (2013)',
     '181': 'Version 1.8.1 (2014)',
-    '17w06a': 'Snapshot 17w06a'
+    '17w06a': 'Snapshot 17w06a',
+    '112': 'Version 1.12 (2017)'
   };
   var dimensionToText = {
     '0': 'Overworld',
