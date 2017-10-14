@@ -33,14 +33,14 @@ module.exports.init = function() {
         phantom.clearCookies();
       });
     })
-    .given("the old colors are used", function() {
+    .given("the 181 colors are used", function() {
       casper.evaluate(function() {
-        Cookies.set('newColors', 'no');
+        Cookies.set('newColors', '181');
       });
     })
-    .given("the new colors are used", function() {
+    .given("the 112 colors are used", function() {
       casper.evaluate(function() {
-        Cookies.set('newColors', 'yes');
+        Cookies.set('newColors', '112');
       });
     })
     .when("I upload \"$an_image_file\"", function(an_image_file) {
@@ -80,6 +80,7 @@ module.exports.init = function() {
           window.casperTest_data = data;
           window.casperTest_url = url;
           callback('theFileName');
+          return {'error': function() {}};
         };
         $.post._oldfunction = old_function;
         return old_function;
