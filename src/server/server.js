@@ -152,6 +152,11 @@ var handlers = {
                 val: dimension
               },
               {
+                name: 'locked',
+                type: TAG.BYTE,
+                val: 1
+              },
+              {
                 name: 'height',
                 type: TAG.SHORT,
                 val: 128
