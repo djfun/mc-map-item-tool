@@ -47,7 +47,7 @@ describe('Server', function() {
     };
     doPostRequest('/createfile', map, function(res, body) {
       expect(res.statusCode).to.equal(200);
-      expect(body).to.equal('f5289678bb41ad3b85f1dd9d378b25df398ea045');
+      expect(body).to.equal('112838b93ed25ab233e25004dfc3aea56f4ec16f');
       done();
     });
   });
