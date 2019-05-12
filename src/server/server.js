@@ -152,6 +152,11 @@ var handlers = {
                 val: dimension
               },
               {
+                name: 'trackingPosition',
+                type: TAG.BYTE,
+                val: 0
+              },
+              {
                 name: 'locked',
                 type: TAG.BYTE,
                 val: 1
