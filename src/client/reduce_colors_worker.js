@@ -682,7 +682,15 @@ function load_colors(new_colors) {
       new Colour(Colour.RGBA, [53, 57, 29, 255]),
       new Colour(Colour.RGBA, [65, 70, 36, 255]),
       new Colour(Colour.RGBA, [76, 82, 42, 255]),
-      new Colour(Colour.RGBA, [40, 43, 22, 255])
+      new Colour(Colour.RGBA, [40, 43, 22, 255]),
+      new Colour(Colour.RGBA, [100, 42, 32, 255]),
+      new Colour(Colour.RGBA, [123, 52, 40, 255]),
+      new Colour(Colour.RGBA, [142, 60, 46, 255]),
+      new Colour(Colour.RGBA, [75, 32, 24, 255]),
+      new Colour(Colour.RGBA, [26, 16, 11, 255]),
+      new Colour(Colour.RGBA, [32, 19, 14, 255]),
+      new Colour(Colour.RGBA, [37, 22, 16, 255]),
+      new Colour(Colour.RGBA, [20, 12, 8, 255])
     ];
   } else {
     minecraftcolors = [

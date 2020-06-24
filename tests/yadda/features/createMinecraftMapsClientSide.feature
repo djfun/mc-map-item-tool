@@ -31,10 +31,10 @@ Feature: Create Minecraft map items client side
     Then the canvas should have the hash code "-1763876220" in step 3
 
     When I click on "reducecolors"
-    Then the canvas should have the hash code "1176144360" in step 4
+    Then the canvas should have the hash code "1959199377" in step 4
 
     When I submit to create the map file on the server
-    Then the map_item sent to the server should have the hash code "800503782"
+    Then the map_item sent to the server should have the hash code "-765962960"
     And the x_center sent to the server should be '0'
     And the z_center sent to the server should be '0'
     And the dimension sent to the server should be '0'
