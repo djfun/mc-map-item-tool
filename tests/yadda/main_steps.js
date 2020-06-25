@@ -43,6 +43,11 @@ module.exports.init = function() {
         Cookies.set('newColors', '112');
       });
     })
+    .given("the 116 colors are used", function() {
+      casper.evaluate(function() {
+        Cookies.set('newColors', '116');
+      });
+    })
     .when("I upload \"$an_image_file\"", function(an_image_file) {
       casper.fill('form', {
         'img': fs.workingDirectory + "/tests/casperjs/testdata/" + an_image_file
