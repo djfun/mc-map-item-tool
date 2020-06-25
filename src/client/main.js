@@ -415,7 +415,8 @@ function list_settings() {
     'yes': 'Version 1.7.2 (2013)',
     '181': 'Version 1.8.1 (2014)',
     '17w06a': 'Snapshot 17w06a',
-    '112': 'Version 1.12 (2017)'
+    '112': 'Version 1.12 (2017)',
+    '116': 'Version 1.16 (2020)'
   };
   var dimensionToText = {
     '0': 'Overworld',
