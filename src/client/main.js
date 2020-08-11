@@ -10,8 +10,7 @@ var ctx_full = document.getElementById('canvas_full').getContext('2d'),
   selected_ratio,
   settings_string;
 
-function draw(ev) {
-  var f = document.getElementById("uploadimage").files[0];
+function draw(f) {
   img = new Image();
   src = url.createObjectURL(f);
 
@@ -468,7 +467,38 @@ var all_maps_data;
 var map_x;
 var map_y;
 
-document.getElementById("uploadimage").addEventListener("change", draw, false);
+function preventDefaults (e) {
+  e.preventDefault()
+  e.stopPropagation()
+}
+
+function highlight(e) {
+  dropArea.classList.add('highlight');
+}
+
+function unhighlight(e) {
+  dropArea.classList.remove('highlight');
+}
+
+function handleDrop(e) {
+  files = e.dataTransfer.files;
+
+  draw(files[0]);
+}
+
+dropArea = document.getElementById('drop-area');
+dropArea.addEventListener('dragenter',preventDefaults, false);
+dropArea.addEventListener('dragenter',highlight, false);
+dropArea.addEventListener('dragover',preventDefaults, false);
+dropArea.addEventListener('dragover',highlight, false);
+dropArea.addEventListener('dragleave',preventDefaults, false);
+dropArea.addEventListener('dragleave',unhighlight, false);
+dropArea.addEventListener('drop',preventDefaults, false);
+dropArea.addEventListener('drop',unhighlight, false);
+dropArea.addEventListener('drop',handleDrop, false);
+
+uploader=document.getElementById("uploadimage")
+uploader.addEventListener("change", function(){draw(uploader.files[0])}, false);
 document.getElementById("selectnumberofparts").addEventListener("click", selectnumber, false);
 document.getElementById("reducecolors").addEventListener("click", reducecolors, false);
 document.getElementById("createfile").addEventListener("click", createfile, false);
