@@ -137,6 +137,11 @@ var handlers = {
         name: '',
         val: [
           {
+            name: 'DataVersion',
+            type: TAG.INT,
+            val: 7856
+          },
+          {
             name: 'data',
             type: TAG.COMPOUND,
             val: [
