@@ -254,7 +254,7 @@ function createfile(ev) {
 
   var xcenter = Cookies.get('xcenter') || '0';
   var zcenter = Cookies.get('zcenter') || '0';
-  var dim = Cookies.get('dimension') || '0';
+  var dim = Cookies.get('dimension') || 'minecraft:overworld';
 
   var mapnumber = parseInt($('#map_number').val(), 10) || 0;
 
