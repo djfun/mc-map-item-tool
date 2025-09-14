@@ -105,6 +105,7 @@ var handlers = {
     var map_item_array;
     var x_center;
     var z_center;
+    var compatibility;
     var dimension;
     var randomid;
     try {
@@ -113,7 +114,16 @@ var handlers = {
       map_item_array = JSON.parse(decodedBody.map_item);
       x_center = parseInt(decodedBody.x_center, 10);
       z_center = parseInt(decodedBody.z_center, 10);
+      compatibility = decodedBody.compatibility;
       dimension = parseInt(decodedBody.dimension, 10);
+      let dimensionTag;
+      if (compatibility == 'new') {
+        const dims = ["minecraft:overworld", "minecraft:the_nether", "minecraft:the_end"];
+        dimensionTag = { name: 'dimension', type: TAG.STRING, val: dims[dimension] };
+      }
+      else {
+        dimensionTag = { name: 'dimension', type: TAG.BYTE, val: dimension };
+      }
       randomid = decodedBody.randomid;
       if (randomid !== "") {
         randomid+= "_";
@@ -150,11 +160,7 @@ var handlers = {
                 type: TAG.BYTE,
                 val: 0
               },
-              {
-                name: 'dimension',
-                type: TAG.BYTE,
-                val: dimension
-              },
+              dimensionTag,
               {
                 name: 'trackingPosition',
                 type: TAG.BYTE,

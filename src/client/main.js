@@ -254,6 +254,7 @@ function createfile(ev) {
 
   var xcenter = Cookies.get('xcenter') || '0';
   var zcenter = Cookies.get('zcenter') || '0';
+  var compatibility = Cookies.get('compatibility') || 'new';
   var dim = Cookies.get('dimension') || '0';
 
   var mapnumber = parseInt($('#map_number').val(), 10) || 0;
@@ -287,6 +288,7 @@ function createfile(ev) {
             map_item: JSON.stringify(map_item),
             x_center: xcenter,
             z_center: zcenter,
+            compatibility: compatibility,
             dimension: dim,
             randomid: randomid
           }, function(data) {
@@ -417,6 +419,10 @@ function list_settings() {
     '17w06a': 'Snapshot 17w06a',
     '112': 'Version 1.12 (2017)'
   };
+  var compatibilityToText = {
+    'new': 'New (1.16 and later)',
+    'legacy': 'Legacy (1.15 and earlier)'
+  };
   var dimensionToText = {
     '0': 'Overworld',
     '1': 'Nether',
@@ -436,6 +442,7 @@ function list_settings() {
   var sett_interpolation = interpolationToText[Cookies.get('interpolation') || 'standard'];
   var sett_xCenter = Cookies.get('xcenter') || '0';
   var sett_zCenter = Cookies.get('zcenter') || '0';
+  var sett_compatibility = compatibilityToText[Cookies.get('compatibility') || 'new'];
   var sett_dimension = dimensionToText[Cookies.get('dimension') || '0'];
 
   settings_string = '<tr><td>Color space</td><td>' + sett_colorSpace + '</td></tr>';
@@ -444,6 +451,7 @@ function list_settings() {
   settings_string += '<tr><td>Interpolation</td><td>' + sett_interpolation + '</td></tr>';
   settings_string += '<tr><td>X Center</td><td>' + sett_xCenter + '</td></tr>';
   settings_string += '<tr><td>Z Center</td><td>' + sett_zCenter + '</td></tr>';
+  settings_string += '<tr><td>Compatibility</td><td>' + sett_compatibility + '</td></tr>';
   settings_string += '<tr><td>Dimension</td><td>' + sett_dimension + '</td></tr>';
   $('#list_settings').html('<table style="margin-left: auto; margin-right: auto; width: 300px">' + settings_string + '</table>');
 }

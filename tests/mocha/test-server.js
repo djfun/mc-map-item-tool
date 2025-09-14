@@ -42,12 +42,13 @@ describe('Server', function() {
       map_item: mapitem,
       x_center: "0",
       z_center: "0",
+      compatibility: "new",
       dimension: "0",
       randomid: ""
     };
     doPostRequest('/createfile', map, function(res, body) {
       expect(res.statusCode).to.equal(200);
-      expect(body).to.equal('112838b93ed25ab233e25004dfc3aea56f4ec16f');
+      expect(body).to.equal('e77750173999e2bca7bb8af86596b1af92a47aa5');
       done();
     });
   });

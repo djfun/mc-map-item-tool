@@ -4,6 +4,7 @@ $(document).ready(function() {
   var colourSpace = Cookies.get('colourSpace') || 'laba';
   var xcenter = Cookies.get('xcenter') || '0';
   var zcenter = Cookies.get('zcenter') || '0';
+  var compatibility = Cookies.get('compatibility') || 'new';
   var dim = Cookies.get('dimension') || '0';
   var newColors = Cookies.get('newColors') || '181';
   var dithering = Cookies.get('dithering') || 'no';
@@ -13,6 +14,7 @@ $(document).ready(function() {
   $('#colorSpace').val(colourSpace);
   $('#x_center').val(xcenter);
   $('#z_center').val(zcenter);
+  $('#compatibility').val(compatibility);
   $('#dimension').val(dim);
   $('#newColors').val(newColors);
   $('#dithering').val(dithering);
@@ -29,6 +31,7 @@ function savesettings(event) {
   var colourSpace = $('#colorSpace').val();
   var xcenter = $('#x_center').val();
   var zcenter = $('#z_center').val();
+  var compatibility = $('#compatibility').val();
   var dim = $('#dimension').val();
   var newColors = $('#newColors').val();
   var dithering = $('#dithering').val();
@@ -37,6 +40,7 @@ function savesettings(event) {
   Cookies.set('colourSpace', colourSpace);
   Cookies.set('xcenter', xcenter);
   Cookies.set('zcenter', zcenter);
+  Cookies.set('compatibility', compatibility);
   Cookies.set('dimension', dim);
   Cookies.set('newColors', newColors);
   Cookies.set('dithering', dithering);
