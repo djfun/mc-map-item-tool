@@ -172,6 +172,11 @@ var handlers = {
                 val: 1
               },
               {
+                name: 'trackingPosition',
+                type: TAG.BYTE,
+                val: 0
+              },
+              {
                 name: 'height',
                 type: TAG.SHORT,
                 val: 128
