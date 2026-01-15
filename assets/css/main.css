@@ -11,6 +11,10 @@
   display: none;
 }
 
+#drop-area.highlight {
+  border-color: blue;
+}
+
 .fileupload {
   margin: 0 auto;
 }
